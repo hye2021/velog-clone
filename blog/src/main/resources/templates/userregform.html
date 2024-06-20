@@ -5,6 +5,8 @@
     <title>My Blog</title>
 </head>
 <body>
+    <h1>회원 가입</h1>
+    <br>
     <form th:action="@{/userreg}" method="post" th:object="${user}" onsubmit="return validateForm(event)">
         <label>아이디를 입력하세요</label><br>
         <input type="text" id="username" th:field="*{username}" required/><br>
@@ -44,7 +46,7 @@
 
             try {
                 // 2. check if username exists
-                let usernameResponse = await fetch("/api/check-username?username=" + document.getElementById("username").value);
+                let usernameResponse = await fetch("/api/users/check-username?username=" + document.getElementById("username").value);
                 if (usernameResponse.ok) {
                     let usernameJson = await usernameResponse.json();
                     if (usernameJson.exists) {
@@ -58,7 +60,7 @@
                     return false;
                 }
                 // 3. check if email exists
-                let emailResponse = await fetch("/api/check-email?email=" + document.getElementById("email").value);
+                let emailResponse = await fetch("/api/users/check-email?email=" + document.getElementById("email").value);
                 if (emailResponse.ok) {
                     let emailJson = await emailResponse.json();
                     if (emailJson.exists) {

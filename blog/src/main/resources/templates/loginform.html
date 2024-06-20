@@ -5,8 +5,23 @@
     <title>My Blog</title>
 </head>
 <body>
-<!-- 임시 -->
-<a th:href="@{/}">로그인 버튼</a>
-<a th:href="@{/userregform}">회원 가입</a>
+    <h1>로그인</h1>
+
+    <p th:if="${error}" th:text="${error}">
+    <form th:action="@{/login}" method="post">
+        <label>아이디를 입력하세요</label><br>
+        <input type="text" id="username" name = "username" required/><br>
+
+        <label>비밀 번호를 입력하세요</label><br>
+        <input type="password" id="password" name="password" required/><br>
+
+        <br>
+        <button type="submit">로그인</button>
+    </form>
+    <br>
+    <br>
+    <a th:href="@{/}">홈 화면으로 돌아가기</a>
+    <br>
+    <a th:href="@{/userregform}">회원 가입</a>
 </body>
 </html>

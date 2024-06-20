@@ -24,6 +24,10 @@ public class UserService {
         return userRepository.findById(id).orElse(null);
     }
 
+    public User getUsersByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
     public User createUser(User user) {
         user.setRegistrationDate(new Timestamp(System.currentTimeMillis()));
 
@@ -53,5 +57,9 @@ public class UserService {
 
     public boolean checkEmail(String email) {
         return userRepository.existsByEmail(email);
+    }
+
+    public boolean checkPassword(User user, String password) {
+        return user.getPassword().equals(password);
     }
 }
