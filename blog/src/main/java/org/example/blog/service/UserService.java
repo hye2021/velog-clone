@@ -19,6 +19,7 @@ public class UserService {
     }
 
     public User createUser(User user) {
+
         return userRepository.save(user);
     }
 
@@ -28,5 +29,13 @@ public class UserService {
 
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
+    }
+
+    public boolean checkUsername(String username) {
+        return userRepository.existsByUsername(username);
+    }
+
+    public boolean checkEmail(String email) {
+        return userRepository.existsByEmail(email);
     }
 }
