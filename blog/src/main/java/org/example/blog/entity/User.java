@@ -6,9 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.sql.Time;
+import java.net.URL;
 import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -28,7 +27,7 @@ public class User {
     @Column(name = "registration_date")
     private Timestamp registrationDate;
     @Column(name = "image_path")
-    private String imagePath;
+    private URL imagePath;
 
     @ManyToMany(fetch = FetchType.EAGER) // User 엔티티를 로드할 때 관련 모든 'Role' 엔티티로 즉시 로드함
     @JoinTable( // 중간 테이블 정의
