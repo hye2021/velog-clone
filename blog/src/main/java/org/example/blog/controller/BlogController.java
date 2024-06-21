@@ -1,5 +1,8 @@
 package org.example.blog.controller;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.example.blog.entity.User;
 import org.example.blog.service.UserService;
@@ -27,12 +30,33 @@ public class BlogController {
     @PostMapping("/login")
     public String login(@RequestParam String username,
                         @RequestParam String password,
-                        Model model) {
+                        Model model,
+                        HttpServletResponse response) {
         User user = userService.getUsersByUsername(username);
         if (user == null || !userService.checkPassword(user, password)) {
             model.addAttribute("error", "잘못된 입력!!!!!!!!!");
             return "loginform";
         }
+
+        // [로그인 성공] 로그인 정보 쿠키 등록
+        Cookie cookie = new Cookie("userId", user.getId().toString());
+        cookie.setPath("/"); // 모든 경로에서 쿠키 접근 가능
+        cookie.setHttpOnly(true); // 자바스크립트에서 쿠키 접근 불가 -> document.cookie로 확인 불가 -> 쿠키를 통한 XSS 공격 방지
+        cookie.setMaxAge(60 * 60 * 24); // 1일 동안 유효함
+        response.addCookie(cookie);
+
+        /* HttpServletResponse 객체
+        *
+        * 클라이언트에게 응답을 생성하는 데 사용된다.
+        * Spring MVC에서는 컨트롤러 메서드의 파라미터로 선언하면 자동으로 주입된다.
+        * 개발자가 응답을 커스터마이징 할 수 있다.
+        * 이 객체는 요청 처리 중에 자동으로 주입된다. by Spring MVC
+        *
+        * 역할 1. 클라이언트에게 전송할 응답 데이터를 설정한다.
+        * 역할 2. HTTP 응답 헤더를 설정한다.
+        * 역할 3. 응답에 포함될 쿠키를 설정한다.
+        * 역할 4. HTTP 상태 코드를 설정한다.
+        */
 
         return "redirect:/@" + username;
     }
