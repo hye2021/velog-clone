@@ -1,6 +1,8 @@
 package org.example.blog.controller;
 
+import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.example.blog.entity.User;
 import org.example.blog.service.UserService;
@@ -8,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import static org.example.blog.config.Constants.*;
 
 @Controller
 public class BlogController {
@@ -36,7 +40,7 @@ public class BlogController {
         }
 
         // [로그인 성공] 로그인 정보 쿠키 등록
-        Cookie cookie = new Cookie("userId", user.getId().toString());
+        Cookie cookie = new Cookie(COOKIE_USER, user.getId().toString());
         cookie.setPath("/"); // 모든 경로에서 쿠키 접근 가능
         cookie.setHttpOnly(true); // 자바스크립트에서 쿠키 접근 불가 -> document.cookie로 확인 불가 -> 쿠키를 통한 XSS 공격 방지
         cookie.setMaxAge(60 * 5); // 5분 동안 유지
@@ -56,6 +60,17 @@ public class BlogController {
         */
 
         return "redirect:/@" + username;
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpServletResponse response) {
+        // 쿠키 삭제
+        Cookie cookie = new Cookie(COOKIE_USER, null);
+        cookie.setMaxAge(0); // 쿠키의 만료 시간을 0으로 설정하여 삭제
+        cookie.setPath("/"); // 쿠키의 경로 설정
+        response.addCookie(cookie);
+
+        return "redirect:/";
     }
 
     @GetMapping("/userregform")

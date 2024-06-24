@@ -8,6 +8,8 @@ import org.example.blog.service.UserService;
 
 import java.io.IOException;
 
+import static org.example.blog.config.Constants.COOKIE_USER;
+
 public class AuthenticationFilter implements Filter {
     private UserService userService;
 
@@ -28,7 +30,7 @@ public class AuthenticationFilter implements Filter {
         Cookie[] cookies = httpRequest.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if ("userId".equals(cookie.getName())) {
+                if (COOKIE_USER.equals(cookie.getName())) {
                     userId = cookie.getValue();
                     break;
                 }
