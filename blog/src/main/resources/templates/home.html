@@ -5,9 +5,14 @@
     <title>My Blog</title>
 </head>
 <body>
-<h1>나의 블로그 플랫폼 방문에 압도적 감사</h1>
-<br>
-<br>
-<a th:href="@{/loginform}">로그인</a>
+    <h1>나의 블로그 플랫폼 방문에 압도적 감사</h1>
+    <br>
+    <br>
+    <a th:href="@{/loginform}">로그인</a>
+
+    <span th:if="${isLogin}">
+        <p>로그인 중입니다.</p>
+    </span>
+
 </body>
 </html>

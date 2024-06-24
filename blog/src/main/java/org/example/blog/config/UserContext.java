@@ -17,6 +17,10 @@ public class UserContext {
         return currentUser.get();
     }
 
+    public static boolean isLogin() {
+        return currentUser.get() != null;
+    }
+
     public static void clear() {
         currentUser.remove();
     }

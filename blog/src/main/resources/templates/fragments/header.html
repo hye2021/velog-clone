@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="kr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Header</title>
+    <link rel="stylesheet" th:href="@{/css/header.css}">
+</head>
+<body>
+
+<!-- 헤더 -->
+<div th:fragment="header">
+
+    <header>
+        <div>
+            <a th:text="${username}" th:href="@{/@{username}(username=${username})}" style="color: Black; text-decoration: none; font-size: 24px;"></a>
+        </div>
+        <nav>
+            <div>
+                <a href="/">알림</a>
+                <a href="/">검색</a>
+                <a href="/" th:if="${isLogin}" style="color: Black; text-decoration: none;">새 글 작성</a>
+
+                <br>
+
+                <a th:href="@{/loginform}" th:if="${!isLogin}" style="color: Black; text-decoration: none;">로그인</a>
+
+                <div th:if="${isLogin}">
+                    <a href="/"><img th:src="@{/path/to/profile/image}" alt="Profile" class="profile-img"></a>
+                    <div>
+                        <a href="/">내 블로그</a>
+                        <a href="/">임시 글</a>
+                        <a href="/">읽기 목록</a>
+                        <a href="/">설정</a>
+                        <a th:href="@{/logout}">로그아웃</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        --------------header--------------
+    </header>
+
+</div>
+
+</body>
+</html>

@@ -5,10 +5,9 @@
     <title>My Blog</title>
 </head>
 <body>
-    <h1 th:text="${user.username}"></h1>
-    로그인 성공함~~~
-    <br>
-    <br>
-    <a th:href="@{/}">홈 화면으로 돌아가기</a>
+    <div th:replace="fragments/header :: header"></div>
+
+    <h1 th:text="${username} + '의 블로그'"></h1>
+
 </body>
 </html>
