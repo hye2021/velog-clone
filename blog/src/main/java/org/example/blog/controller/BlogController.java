@@ -42,7 +42,7 @@ public class BlogController {
         Cookie cookie = new Cookie("userId", user.getId().toString());
         cookie.setPath("/"); // 모든 경로에서 쿠키 접근 가능
         cookie.setHttpOnly(true); // 자바스크립트에서 쿠키 접근 불가 -> document.cookie로 확인 불가 -> 쿠키를 통한 XSS 공격 방지
-        cookie.setMaxAge(60 * 60 * 24); // 1일 동안 유효함
+        cookie.setMaxAge(60 * 5); // 5분 동안 유지
         response.addCookie(cookie);
 
         /* HttpServletResponse 객체

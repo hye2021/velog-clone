@@ -21,7 +21,7 @@ public class AuthenticationFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
 
         System.out.println("[Authentication Filter] " + httpRequest.getRequestURI());
-        System.out.println("[Authentication Filter] " + httpRequest.getMethod());
+        // System.out.println("[Authentication Filter] " + httpRequest.getMethod());
 
         // 쿠키에서 userId 추출
         String userId = null;
@@ -54,5 +54,4 @@ public class AuthenticationFilter implements Filter {
 
         return null;
     }
-
 }
