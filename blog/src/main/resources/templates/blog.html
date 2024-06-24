@@ -3,11 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <title>My Blog</title>
+    <script>
+        function navigateTo(page) {
+            var username = document.getElementById('username').value;
+            location.href = '/@' + username + '/' + page;
+        }
+    </script>
 </head>
 <body>
     <div th:replace="fragments/header :: header"></div>
 
-    <h1 th:text="${username} + '의 블로그'"></h1>
+    <h1 th:text="${user.username} + '의 블로그'"></h1>
+    <!-- 버튼 -->
+    <input type="hidden" id="username" th:value="${user.username}" />
+    <button onclick="navigateTo('posts')">글</button>
+    <button onclick="navigateTo('series')">시리즈</button>
+    <button onclick="navigateTo('about')">소개</button>
 
+    <main th:replace="'fragments/'+${page} :: content"></main>
 </body>
 </html>
