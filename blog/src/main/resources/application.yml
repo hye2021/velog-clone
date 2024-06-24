@@ -15,3 +15,6 @@ spring:
           dialect: org.hibernate.dialect.MySQLDialect
 server:
     port: 80
+    servlet:
+      session:
+        tracking-modes=cookie
