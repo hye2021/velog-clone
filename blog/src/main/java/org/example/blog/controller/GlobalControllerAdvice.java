@@ -1,5 +1,6 @@
-package org.example.blog.config;
+package org.example.blog.controller;
 
+import org.example.blog.statics.UserContext;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 

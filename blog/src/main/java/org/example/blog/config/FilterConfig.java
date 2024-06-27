@@ -1,6 +1,7 @@
 package org.example.blog.config;
 
 import org.example.blog.service.UserService;
+import org.example.blog.filter.AuthenticationFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

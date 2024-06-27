@@ -1,8 +1,6 @@
 package org.example.blog.controller;
 
-import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.example.blog.entity.User;
 import org.example.blog.service.UserService;
@@ -11,7 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import static org.example.blog.config.Constants.*;
+import static org.example.blog.statics.Constants.*;
 
 @Controller
 public class BlogController {
@@ -90,5 +88,10 @@ public class BlogController {
     @GetMapping("/welcome")
     public String welcome() {
         return "welcome";
+    }
+
+    @GetMapping("/write")
+    public String write() {
+        return "write";
     }
 }

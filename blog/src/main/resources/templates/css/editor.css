@@ -1,0 +1,78 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 20px;
+}
+
+.editor-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.editor {
+    width: 45%;
+    display: flex;
+    flex-direction: column;
+}
+
+.editor input, .editor textarea {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.toolbar button {
+    padding: 10px;
+    margin-right: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.toolbar button:hover {
+    background-color: #eee;
+}
+
+textarea {
+    height: 300px;
+    resize: vertical;
+}
+
+.preview {
+    width: 45%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.bottom-buttons {
+    margin-top: 20px;
+    text-align: right;
+}
+
+.bottom-buttons button {
+    padding: 10px 20px;
+    margin-left: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #28a745;
+    color: white;
+    cursor: pointer;
+}
+
+.bottom-buttons button:hover {
+    background-color: #218838;
+}

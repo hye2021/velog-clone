@@ -1,4 +1,4 @@
-package org.example.blog.config;
+package org.example.blog.statics;
 
 public class UserContext {
     /* Thread Local

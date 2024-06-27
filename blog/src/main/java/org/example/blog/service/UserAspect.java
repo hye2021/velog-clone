@@ -3,7 +3,7 @@ package org.example.blog.service;
 import org.example.blog.annotation.CheckLogin;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.example.blog.config.UserContext;
+import org.example.blog.statics.UserContext;
 import org.springframework.stereotype.Component;
 
 

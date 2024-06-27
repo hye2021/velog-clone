@@ -1,14 +1,14 @@
-package org.example.blog.config;
+package org.example.blog.filter;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.example.blog.service.UserService;
+import org.example.blog.statics.UserContext;
 
 import java.io.IOException;
 
-import static org.example.blog.config.Constants.COOKIE_USER;
+import static org.example.blog.statics.Constants.COOKIE_USER;
 
 public class AuthenticationFilter implements Filter {
     private UserService userService;
