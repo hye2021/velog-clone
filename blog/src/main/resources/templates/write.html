@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="kr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>새 글 작성</title>
+    <link rel="stylesheet" href="css/editor.css">
+</head>
+<body>
+<div class="editor-container">
+    <div class="editor">
+        <input type="text" id="title" placeholder="제목을 입력하세요">
+        <br>
+        <input type="text" id="tags" placeholder="태그를 입력하세요">
+        <div class="toolbar">
+            <button onclick="formatText('# ')">H1</button>
+            <button onclick="formatText('## ')">H2</button>
+            <button onclick="formatText('### ')">H3</button>
+            <button onclick="formatText('#### ')">H4</button>
+            <button onclick="formatText('**', '**')">B</button>
+            <button onclick="formatText('*', '*')">I</button>
+            <button onclick="formatText('~~', '~~')">S</button>
+            <button onclick="insertText('[링크 텍스트](링크 URL)')">링크</button>
+            <button onclick="insertText('![이미지 설명](이미지 URL)')">이미지</button>
+            <button onclick="formatText('> ')">인용</button>
+            <button onclick="formatText('`', '`')">코드</button>
+        </div>
+        <textarea id="content" placeholder="당신의 이야기를 적어보세요..." oninput="updatePreview()"></textarea>
+    </div>
+    <div class="preview" id="preview"></div>
+</div>
+<div class="bottom-buttons">
+    <button onclick="saveDraft()">임시저장</button>
+    <button onclick="publish()">출간하기</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/3.0.8/marked.min.js"></script>
+<script src="js/editor.js"></script>
+</body>
+</html>

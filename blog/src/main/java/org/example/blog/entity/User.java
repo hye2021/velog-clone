@@ -20,12 +20,18 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String username;
+
     private String password;
+
     private String name;
+
     private String email;
-    @Column(name = "registration_date")
+
+    @Column(name = "registration_date", nullable = false, updatable = false)
     private Timestamp registrationDate;
+
     @Column(name = "image_path")
     private URL imagePath;
 
