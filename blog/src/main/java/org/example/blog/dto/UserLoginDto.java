@@ -1,4 +1,4 @@
-package org.example.blog.security.dto;
+package org.example.blog.dto;
 
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
