@@ -13,12 +13,12 @@ import java.util.Date;
 import java.util.List;
 
 @Slf4j
-@Component
+@Component // Spring Bean으로 등록
 public class JwtTokenizer {
     private final byte[] accessSecret;
     private final byte[] refreshSecret;
 
-    public final static Long ACCESS_TOKEN_EXPIRE_COUNT = 30 * 60 * 1000L; // 30 minutes
+    public final static Long ACCESS_TOKEN_EXPIRE_COUNT = 5 * 60 * 1000L; // 5 minutes
     public final static Long REFRESH_TOKEN_EXPIRE_COUNT = 7 * 24 * 60 * 60 * 1000L; // 7 days
 
     public JwtTokenizer(@Value("${jwt.secretKey}") String accessSecret,
@@ -49,12 +49,14 @@ public class JwtTokenizer {
         claims.put("name", name);
         claims.put("username", username);
 
-        return Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(new Date().getTime() + expire))
-                .signWith(getSigningKey(secretKey))
-                .compact();
+        return Jwts.builder() // 빌더 패턴
+                .setClaims(claims) // 데이터
+                .setIssuedAt(new Date()) // 토큰 발급 시간
+                .setExpiration(new Date(new Date().getTime() + expire)) // 만료 시간
+                // `signWith` 메서드를 통해 HMAC-SHA 알고리즘을 사용하여 서명
+                // `getSigningKey` 메서드를 호출하여 해당 알고리즘에 필요한 SecretKey를 생성
+                .signWith(getSigningKey(secretKey)) // 서명
+                .compact(); // 직렬화
     }
 
     /**
@@ -76,14 +78,16 @@ public class JwtTokenizer {
     }
 
     public Claims parseToken(String token, byte[] secretKey) {
-        return Jwts.parserBuilder()
-                .setSigningKey(getSigningKey(secretKey))
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        return Jwts.parserBuilder() // 빌더 패턴
+                .setSigningKey(getSigningKey(secretKey)) // 서명 키
+                .build() // 파서 생성
+                .parseClaimsJws(token) // 파싱
+                .getBody(); // 데이터(클레임) 반환
     }
 
     /**
+     * [서명키 생성]
+     * 주어진 바이트 배열을 기반으로 HMAC-SHA 알고리즘에 필요한 SecretKey 생성
      * @param secretKey - byte형식
      * @return Key 형식 시크릿 키
      */
