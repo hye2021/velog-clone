@@ -40,6 +40,7 @@ public class SecurityConfig {
                         authorizeRequests
                                 .requestMatchers("/", "/loginform", "/login", "userreg", "logout", "userregform", "userreg").permitAll() // 루트 경로, 로그인 페이지, 회원가입 페이지, 로그아웃 페이지는 모두 허용
                                 .requestMatchers("/@{username}", "@{username}/**").permitAll() // 사용자 페이지는 모두 허용
+                                .requestMatchers("/api/**").permitAll()
                                 .anyRequest().authenticated() // 그 외의 요청은 인증된 사용자만 허용
                 )
                 // CSRF 보안 설정

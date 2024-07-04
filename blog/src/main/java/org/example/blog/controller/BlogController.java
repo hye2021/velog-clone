@@ -17,6 +17,11 @@ public class BlogController {
     @Autowired
     private UserService userService;
 
+    @GetMapping("/test")
+    public String test() {
+        return "test";
+    }
+
     @GetMapping("/")
     public String home() {
         return "home";
@@ -26,7 +31,6 @@ public class BlogController {
     public String loginform(Model model) {
         return "loginform";
     }
-
 
 
     @GetMapping("/logout")

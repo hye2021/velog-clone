@@ -1,6 +1,8 @@
 package org.example.blog.controller;
 
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,56 @@ public class BlogRestController {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenizer jwtTokenizer;
     private final RefreshTokenService refreshTokenService;
+
+    @PostMapping("/refrechToken") // Access Token이 만료되었을 때, Refresh Token을 사용하여 새로운 Access Token 발급
+    public ResponseEntity requestRefresh(HttpServletRequest httpServletRequest,
+                                         HttpServletResponse httpServletResponse) {
+
+        String resfreshToken = null;
+
+        // HttpOnly 쿠키에서 Refresh Token을 조회
+        Cookie[] cookies = httpServletRequest.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("refreshToken")) {
+                    resfreshToken = cookie.getValue();
+                    break;
+                }
+            }
+        }
+
+        // Refresh Token이 존재하지 않으면, 401 Unauthorized 반환
+        if (resfreshToken == null) {
+            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+        }
+
+        Claims claims = jwtTokenizer.parseRefreshToken(resfreshToken);
+        Long userId = Long.valueOf((Integer)claims.get("userId"));
+        User user = userService.getUserById(userId);
+        if (user == null) {
+            throw new IllegalArgumentException("User not found");
+        }
+        List roles = (List)claims.get("roles");
+        String email = (String)claims.get("email");
+
+        String accessToken = jwtTokenizer.createAccessToken(userId, email, user.getName(), user.getUsername(), roles);
+
+        UserLoginResponseDto loginResponse = UserLoginResponseDto.builder()
+                .accessToken(accessToken)
+                .refreshToken(resfreshToken)
+                .userId(userId)
+                .name(user.getName())
+                .build();
+
+        Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
+        accessTokenCookie.setHttpOnly(true);
+        // accessTokenCookie.setSecure(true); // HTTPS를 사용하는 경우 true
+        accessTokenCookie.setPath("/");
+        accessTokenCookie.setMaxAge(Math.toIntExact(JwtTokenizer.ACCESS_TOKEN_EXPIRE_COUNT / 1000));
+        httpServletResponse.addCookie(accessTokenCookie);
+
+        return new ResponseEntity(loginResponse, HttpStatus.OK);
+    }
 
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody @Valid UserLoginDto loginDto, // form -> jwt

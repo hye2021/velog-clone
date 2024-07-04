@@ -12,10 +12,10 @@ import jakarta.validation.constraints.Pattern;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserLoginDto {
-    @NotEmpty
+    @NotEmpty(message = "username is required")
     private String username;
 
-    @NotEmpty
+    @NotEmpty(message = "password is required")
     @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{1,20}$") // 숫자, 영문, 특수문자를 포함한 1자 이상 20자 이하
     private String password;
 }

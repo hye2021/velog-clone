@@ -1,0 +1,28 @@
+POST http://localhost/login
+Content-Type: application/json
+
+{
+  "username": "hye2021",
+  "password": "hye2021"
+}
+
+###
+GET http://localhost:/api/authtest
+Cookie: accessToken=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsaW9uIiwidXNlcm5hbWUiOiJsaW9uIiwibmFtZSI6Imxpb24iLCJ1c2VySWQiOjYsInJvbGVzIjpbIlVTRVIiXSwiaWF0IjoxNzE5ODkzNTM0LCJleHAiOjE3MTk4OTM1OTR9.3AANYLqXtqQkxIAOY0DgkCqNuGB_XOEn773mfD-iRqI
+
+###
+GET http://localhost/api/authtest
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsaW9uIiwidXNlcm5hbWUiOiJsaW9uIiwibmFtZSI6Imxpb24iLCJ1c2VySWQiOjYsInJvbGVzIjpbIlVTRVIiXSwiaWF0IjoxNzE5ODk3MzA2LCJleHAiOjE3MTk4OTkxMDZ9.YNzWyWCOQOyx4evBzMmUBqG5cMkfZmXR0SBuY1IFeuM
+
+###
+# @no-cookie-jar
+GET http://localhost/api/authtest
+
+###
+POST http://localhost/refreshToken
+Cookie: refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsaW9uIiwidXNlcm5hbWUiOiJsaW9uIiwibmFtZSI6Imxpb24iLCJ1c2VySWQiOjYsInJvbGVzIjpbIlVTRVIiXSwiaWF0IjoxNzE5ODk1NzM0LCJleHAiOjE3MjA1MDA1MzR9.v-M1FDHAvdlE5h8FmlWB6f1CsN2Nl5uszZRas23rXW8
+
+
+###
+GET http://localhost/welcome
+Cookie: accessToken=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsaW9uIiwidXNlcm5hbWUiOiJsaW9uIiwibmFtZSI6Imxpb24iLCJ1c2VySWQiOjYsInJvbGVzIjpbIlVTRVIiXSwiaWF0IjoxNzE5ODk3MzA2LCJleHAiOjE3MTk4OTkxMDZ9.YNzWyWCOQOyx4evBzMmUBqG5cMkfZmXR0SBuY1IFeuM

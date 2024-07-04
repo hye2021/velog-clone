@@ -6,8 +6,10 @@ import org.example.blog.repository.UserRepository;
 import org.example.blog.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -41,6 +43,11 @@ public class UserService {
         user.setRoles(user_roles);
 
         return userRepository.save(user);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<User> getUser(Long userId) {
+        return userRepository.findById(userId);
     }
 
     public User updateUser(User user) {
