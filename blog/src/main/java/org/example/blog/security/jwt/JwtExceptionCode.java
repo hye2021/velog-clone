@@ -14,7 +14,7 @@ public enum JwtExceptionCode {
     @Getter
     private String code;
 
-    @Setter
+    @Setter @Getter
     private String message;
 
     JwtExceptionCode(String code, String message) {
