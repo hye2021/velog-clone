@@ -1,4 +1,4 @@
-package org.example.blog.filter;
+package org.example.blog.security;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.Cookie;

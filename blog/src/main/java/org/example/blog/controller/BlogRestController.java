@@ -4,11 +4,11 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.blog.dto.UserLoginDto;
-import org.example.blog.dto.UserLoginResponseDto;
+import org.example.blog.security.dto.UserLoginDto;
+import org.example.blog.security.dto.UserLoginResponseDto;
 import org.example.blog.entity.RefreshToken;
 import org.example.blog.entity.Role;
-import org.example.blog.security.JwtTokenizer;
+import org.example.blog.security.jwt.JwtTokenizer;
 import org.example.blog.service.RefreshTokenService;
 import org.example.blog.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -21,9 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.example.blog.entity.User;
 
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.example.blog.statics.Constants.COOKIE_USER;
 
 @RestController
 @RequiredArgsConstructor

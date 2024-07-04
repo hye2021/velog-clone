@@ -1,4 +1,4 @@
-package org.example.blog.security;
+package org.example.blog.security.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

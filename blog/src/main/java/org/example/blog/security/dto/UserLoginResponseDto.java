@@ -1,4 +1,4 @@
-package org.example.blog.dto;
+package org.example.blog.security.dto;
 
 import lombok.*;
 
