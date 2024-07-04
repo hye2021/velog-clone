@@ -1,6 +1,8 @@
 package org.example.blog.config;
 
 import lombok.RequiredArgsConstructor;
+import org.example.blog.security.jwt.CustomAuthenticationEntryPoint;
+import org.example.blog.security.jwt.JwtAuthenticationFilter;
 import org.example.blog.security.jwt.JwtTokenizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +12,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -20,11 +23,18 @@ import java.util.List;
 @EnableWebSecurity // Spring Security를 사용하기 위한 어노테이션
 @RequiredArgsConstructor // 생성자 주입을 위한 Lombok 어노테이션
 public class SecurityConfig {
+
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final JwtTokenizer jwtTokenizer;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http // HttpSecurity를 사용하여 보안 설정
+                // JWT 인증 필터 설정 -> UsernamePasswordAuthenticationFilter 앞에 위치 (우선순위 설정)
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenizer), UsernamePasswordAuthenticationFilter.class)
+                // 커스텀 예외 처리 설정
+                .exceptionHandling(exceptionHandling ->
+                        exceptionHandling.authenticationEntryPoint(customAuthenticationEntryPoint))
                 // 요청에 대한 보안 설정
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests

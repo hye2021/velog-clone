@@ -11,14 +11,6 @@ import java.io.IOException;
 import com.google.gson.Gson;
 import java.util.HashMap;
 
-/*
- * 인증 진입점 필터 (AuthenticationEntryPoint)
- * 사용자의 인증 요청에 대한 응답을 처리한다.
- * 주로 JSON 형식의 오류 메시지를 생성하여 클라이언트에 반환하거나,
- * 페이지 요청일 경우 리다이렉트를 처리한다.
- * commence() : 요청에서 발생한 인증 예외를 처리한다. (인증되지 않은 사용자)
- */
-
 @Slf4j
 @Component
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
