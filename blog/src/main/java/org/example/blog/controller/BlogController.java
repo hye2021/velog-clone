@@ -14,66 +14,29 @@ import static org.example.blog.statics.Constants.*;
 
 @Controller
 public class BlogController {
+    private final String PATH = "blog/";
+
     @Autowired
     private UserService userService;
 
-    @GetMapping("/test")
-    public String test() {
-        return "test";
-    }
-
     @GetMapping("/")
     public String home() {
-        return "home";
-    }
-
-    @GetMapping("/loginform")
-    public String loginform(Model model) {
-        return "user/loginform";
-    }
-
-
-    @GetMapping("/logout")
-    public String logout(HttpServletResponse response) {
-        // 쿠키 삭제
-        Cookie cookie = new Cookie(COOKIE_USER, null);
-        cookie.setMaxAge(0); // 쿠키의 만료 시간을 0으로 설정하여 삭제
-        cookie.setPath("/"); // 쿠키의 경로 설정
-        response.addCookie(cookie);
-
-        return "redirect:/";
-    }
-
-    @GetMapping("/userregform")
-    public String userregform(Model model) {
-        model.addAttribute("user", new User());
-        return "userregform";
-    }
-
-    @PostMapping("/userreg")
-    public String userreg(@ModelAttribute User user) {
-        // todo: 오류 페이지 redirect
-        userService.createUser(user);
-
-        return "redirect:/welcome";
-    }
-
-    @GetMapping("/welcome")
-    public String welcome() {
-        return "welcome";
+        return PATH + "home";
     }
 
     @GetMapping("/write")
     public String write() {
-        return "write";
+        return PATH + "write";
     }
 
     @GetMapping("/@{username}")
     public String userBlog(@PathVariable String username,
                            RedirectAttributes redirectAttributes) {
         User user = userService.getUsersByUsername(username);
-        if (user == null)
+        if (user == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "존재하지 않는 페이지입니다.");
             return "redirect:/error";
+        }
 
         redirectAttributes.addFlashAttribute("user", user);
         return "redirect:/@" + username + "/" + "posts";
@@ -88,6 +51,6 @@ public class BlogController {
             model.addAttribute("user", user);
         }
         model.addAttribute("page", page);
-        return "blog";
+        return PATH + "blog";
     }
 }

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="kr"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Error Page</title>
+</head>
+<body>
+    <h1>error</h1>
+<!--    <p th:text="'Error Code: ' + ${statusCode}"></p>-->
+    <p th:text="'Error Message: ' + ${errorMessage}"></p>
+    <a th:href="@{/}">홈 화면으로 돌아가기</a>
+</body>
+</html>

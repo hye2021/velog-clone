@@ -1,11 +1,13 @@
 spring:
   application:
     name: blog
+
   datasource:
     url: jdbc:mysql://localhost:3306/blog
     username: hye2021
     password: hye2021
     driver-class-name: com.mysql.cj.jdbc.Driver
+
   jpa:
     hibernate:
       ddl-auto: update

@@ -12,6 +12,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.example.blog.security.dto.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.blog.security.jwt.exception.JwtExceptionCode;
+import org.example.blog.security.jwt.token.JwtAuthenticationToken;
+import org.example.blog.security.jwt.util.JwtTokenizer;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -39,31 +42,34 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter { // OncePerRe
                                     FilterChain filterChain) throws ServletException, IOException {
 
         String token = getToken(request);
+        log.info("*** token : {}", token);
 
         if(StringUtils.hasText(token)){
             try{
                 getAuthentication(token);
             }catch (ExpiredJwtException e){
+                log.error("** Expired Token : {}",token,e);
                 request.setAttribute("exception", JwtExceptionCode.EXPIRED_TOKEN.getCode());
-                log.error("Expired Token : {}",token,e);
                 throw new BadCredentialsException("Expired token exception", e);
             }catch (UnsupportedJwtException e){
+                log.error("** Unsupported Token: {}", token, e);
                 request.setAttribute("exception", JwtExceptionCode.UNSUPPORTED_TOKEN.getCode());
-                log.error("Unsupported Token: {}", token, e);
                 throw new BadCredentialsException("Unsupported token exception", e);
             } catch (MalformedJwtException e) {
+                log.error("** Invalid Token: {}", token, e);
                 request.setAttribute("exception", JwtExceptionCode.INVALID_TOKEN.getCode());
-                log.error("Invalid Token: {}", token, e);
                 throw new BadCredentialsException("Invalid token exception", e);
             } catch (IllegalArgumentException e) {
+                log.error("** Token not found: {}", token, e);
                 request.setAttribute("exception", JwtExceptionCode.NOT_FOUND_TOKEN.getCode());
-                log.error("Token not found: {}", token, e);
                 throw new BadCredentialsException("Token not found exception", e);
             } catch (Exception e) {
-                log.error("JWT Filter - Internal Error: {}", token, e);
+                log.error("*** JWT Filter - Internal Error: {}", token, e);
+                request.setAttribute("exception", JwtExceptionCode.UNKNOWN_ERROR.getCode());
                 throw new BadCredentialsException("JWT filter internal exception", e);
             }
         }
+        log.info("*** token is not found");
         filterChain.doFilter(request, response); // 다음 필터로 이동
     }
 

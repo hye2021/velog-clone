@@ -1,10 +1,12 @@
 package org.example.blog.service;
 
+import lombok.RequiredArgsConstructor;
 import org.example.blog.entity.Role;
 import org.example.blog.entity.User;
 import org.example.blog.repository.UserRepository;
 import org.example.blog.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,11 +14,11 @@ import java.sql.Timestamp;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private RoleRepository roleRepository;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public Iterable<User> getAllUsers() {
         return userRepository.findAll();
@@ -32,6 +34,9 @@ public class UserService {
 
     public User createUser(User user) {
         user.setRegistrationDate(new Timestamp(System.currentTimeMillis()));
+
+        // password encoding
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         // ROLE_USER 역할 지정
         Role role = roleRepository.findByName("ROLE_USER");

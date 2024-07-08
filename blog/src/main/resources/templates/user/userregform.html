@@ -5,85 +5,86 @@
     <title>My Blog</title>
 </head>
 <body>
-    <h1>회원 가입</h1>
+<h1>회원 가입</h1>
+<br>
+<form th:action="@{/userreg}" method="post" th:object="${user}" onsubmit="return validateForm(event)">
+    <label>아이디를 입력하세요</label><br>
+    <input type="text" id="username" th:field="*{username}" required/><br>
+
+    <label>비밀 번호를 입력하세요</label><br>
+    <input type="password" id="password" th:field="*{password}" required/><br>
+
+    <label>비밀 번호를 확인해주세요</label><br>
+    <input type="password" id="retype_password" required/><br>
+
+    <label>이름을 입력해주세요</label><br>
+    <input type="text" id="name" th:field="*{name}" required/><br>
+
+    <label>이메일을 입력해주세요</label><br>
+    <input type="text" id="email" th:field="*{email}" required/><br>
+
     <br>
-    <form th:action="@{/userreg}" method="post" th:object="${user}" onsubmit="return validateForm(event)">
-        <label>아이디를 입력하세요</label><br>
-        <input type="text" id="username" th:field="*{username}" required/><br>
+    <span id="error" style="color: red; display: none;"></span><br>
+    <button type="submit">회원 가입하기</button>
+</form>
 
-        <label>비밀 번호를 입력하세요</label><br>
-        <input type="password" id="password" th:field="*{password}" required/><br>
+<script>
+    async function validateForm(event) {
+        event.preventDefault(); // 폼 제출을 중단
 
-        <label>비밀 번호를 확인해주세요</label><br>
-        <input type="password" id="retype_password" required/><br>
+        var password = document.getElementById("password").value;
+        var retype_password = document.getElementById("retype_password").value;
+        var error = document.getElementById("error");
+        error.style.display = "none";
 
-        <label>이름을 입력해주세요</label><br>
-        <input type="text" id="name" th:field="*{name}" required/><br>
-
-        <label>이메일을 입력해주세요</label><br>
-        <input type="text" id="email" th:field="*{email}" required/><br>
-
-        <br>
-        <span id="error" style="color: red; display: none;"></span><br>
-        <button type="submit">회원 가입하기</button>
-    </form>
-
-    <script>
-        async function validateForm(event) {
-            event.preventDefault(); // 폼 제출을 중단
-
-            var password = document.getElementById("password").value;
-            var retype_password = document.getElementById("retype_password").value;
-            var error = document.getElementById("error");
-            error.style.display = "none";
-
-            // 1. check if passwords match
-            if (password !== retype_password) {
-                error.style.display = "block";
-                error.innerHTML = "비밀번호가 일치하지 않습니다.";
-                return false;
-            }
-
-            try {
-                // 2. check if username exists
-                let usernameResponse = await fetch("/api/users/check-username?username=" + document.getElementById("username").value);
-                if (usernameResponse.ok) {
-                    let usernameJson = await usernameResponse.json();
-                    if (usernameJson.exists) {
-                        error.style.display = "block";
-                        error.innerHTML = "이미 존재하는 아이디입니다.";
-                        return false;
-                    }
-                } else { // http 오류 코드
-                    error.style.display = "block";
-                    error.innerHTML = "HTTP 오류: " + usernameResponse.status;
-                    return false;
-                }
-                // 3. check if email exists
-                let emailResponse = await fetch("/api/users/check-email?email=" + document.getElementById("email").value);
-                if (emailResponse.ok) {
-                    let emailJson = await emailResponse.json();
-                    if (emailJson.exists) {
-                        error.style.display = "block";
-                        error.innerHTML = "이미 존재하는 이메일입니다.";
-                        return false;
-                    }
-                } else { // http 오류 코드
-                    error.style.display = "block";
-                    error.innerHTML = "HTTP 오류: " + emailResponse.status
-                    return false;
-                }
-            } catch (e) {
-                error.style.display = "block";
-                error.innerHTML = "회원 가입 중 오류가 발생했습니다.\n\n" + e;
-                return false;
-            }
-
-            // 모든 검사가 통과되면 폼 제출
-            document.querySelector("form").submit();
-
-            return true;
+        // 1. check if passwords match
+        if (password !== retype_password) {
+            error.style.display = "block";
+            error.innerHTML = "비밀번호가 일치하지 않습니다.";
+            return false;
         }
-    </script>
+
+        try {
+            // 2. check if username exists
+            let usernameResponse = await fetch("/api/users/check-username?username=" + document.getElementById("username").value);
+            if (usernameResponse.ok) {
+                let usernameJson = await usernameResponse.json();
+                if (usernameJson.exists) {
+                    error.style.display = "block";
+                    error.innerHTML = "이미 존재하는 아이디입니다.";
+                    return false;
+                }
+            } else { // http 오류 코드
+                error.style.display = "block";
+                error.innerHTML = "HTTP 오류: " + usernameResponse.status;
+                return false;
+            }
+
+            // 3. check if email exists
+            let emailResponse = await fetch("/api/users/check-email?email=" + document.getElementById("email").value);
+            if (emailResponse.ok) {
+                let emailJson = await emailResponse.json();
+                if (emailJson.exists) {
+                    error.style.display = "block";
+                    error.innerHTML = "이미 존재하는 이메일입니다.";
+                    return false;
+                }
+            } else { // http 오류 코드
+                error.style.display = "block";
+                error.innerHTML = "HTTP 오류: " + emailResponse.status;
+                return false;
+            }
+        } catch (e) {
+            error.style.display = "block";
+            error.innerHTML = "회원 가입 중 오류가 발생했습니다.\n\n" + e.message;
+            return false;
+        }
+
+        // 모든 검사가 통과되면 폼 제출
+        event.target.submit();
+
+        return true;
+    }
+</script>
 </body>
 </html>

@@ -1,5 +1,6 @@
 package org.example.blog.security.jwt.exception;
 
+import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.ServletException;
@@ -20,27 +21,44 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     public void commence(HttpServletRequest request,
                          HttpServletResponse response,
                          AuthenticationException authException) throws IOException, ServletException {
+        log.info("*** CustomAuthenticationEntryPoint >> commence");
 
         // 예외 메시지를 받아옴
-        String exceptin = (String)request.getAttribute("exception");
+        String exception = (String)request.getAttribute("exception");
+        log.info("*** exception : {}", exception);
+        log.info("*** request.getRequestURI() : {}", request.getRequestURI());
+        log.info("*** request : {}", request);
+
+        // todo: exception 이 없으면
+        if (exception == null) {
+            FilterChain filterChain = (FilterChain) request.getAttribute("filterChain");
+            if (filterChain != null) {
+                filterChain.doFilter(request, response);
+            }
+        }
 
         //어떤요청인지를 구분..
         //RESTful로 요청한건지..  그냥 페이지 요청한건지 구분해서 다르게 동작하도록 구현.
         if(isRestRequest(request)){
-            handleRestResponse(request,response,exceptin);
+            log.info("*** Rest Request");
+            handleRestResponse(request,response,exception);
         }else{
-            handlePageResponse(request,response,exceptin);
+            log.info("*** Page Request");
+            handlePageResponse(request,response,exception);
         }
     }
 
     private boolean isRestRequest(HttpServletRequest request) {
         String requestedWithHeader = request.getHeader("X-Requested-With");
-        return "XMLHttpRequest".equals(requestedWithHeader) || request.getRequestURI().startsWith("/api/");
+        log.info("*** requestedWithHeader : {}", requestedWithHeader);
+        return "XMLHttpRequest".equals(requestedWithHeader);
     }
 
     //페이지로 요청이 들어왔을 때 인증되지 않은 사용자라면 무조건 /loginform으로 리디렉션 시키겠다.
-    private void handlePageResponse(HttpServletRequest request, HttpServletResponse response, String exception) throws IOException {
-        log.error("Page Request - Commence Get Exception : {}", exception);
+    private void handlePageResponse(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    String exception) throws IOException {
+        log.error("[Authentication Entry Point] Page Request - Commence Get Exception : {}", exception);
 
         if (exception != null) {
             // 추가적인 페이지 요청에 대한 예외 처리 로직을 여기에 추가할 수 있습니다.
@@ -50,8 +68,10 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     }
 
     // RESTful로 요청이 들어왔을 때 인증되지 않은 사용자라면 예외 코드에 따라 응답을 설정
-    private void handleRestResponse(HttpServletRequest request, HttpServletResponse response, String exception) throws IOException {
-        log.error("Rest Request - Commence Get Exception : {}", exception);
+    private void handleRestResponse(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    String exception) throws IOException {
+        log.error("[Authentication Entry Point] Rest Request - Commence Get Exception : {}", exception);
 
         if (exception != null) {
             if (exception.equals(JwtExceptionCode.INVALID_TOKEN.getCode())) {
@@ -67,10 +87,11 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
                 log.error("entry point >> not found token");
                 setResponse(response, JwtExceptionCode.NOT_FOUND_TOKEN);
             } else {
+                log.error("entry point >> unknown error");
                 setResponse(response, JwtExceptionCode.UNKNOWN_ERROR);
             }
         } else {
-            setResponse(response, JwtExceptionCode.UNKNOWN_ERROR);
+            // 예외 코드가 없을 경우
         }
     }
 

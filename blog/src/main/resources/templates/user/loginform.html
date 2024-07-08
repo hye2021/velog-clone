@@ -5,56 +5,56 @@
     <title>My Blog</title>
 </head>
 <body>
-    <h1>로그인</h1>
+<h1>로그인</h1>
 
-    <p th:if="${error}" th:text="${error}">
+<p id="error" style="color: red;"></p> <!-- 오류 메시지를 출력할 요소 -->
 
-    <script>
-        async function login(event) {
-            event.preventDefault(); // 폼 제출을 중단
+<script>
+    async function login(event) {
+        event.preventDefault(); // 폼 제출을 중단
 
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
 
-            // 서버로 로그인 요청
-            const response = await fetch('/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    username: username,
-                    password: password
-                })
-            });
+        // 서버로 로그인 요청
+        const response = await fetch('/api/users/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+                username: username,
+                password: password
+            })
+        });
 
-            // 응답 처리
-            if (response.ok) {
-                const data = await response.json(); // JSON 형태로 응답을 파싱
-                localStorage.setItem('accessToken', data.accessToken);
-                localStorage.setItem('refreshToken', data.refreshToken);
-                window.location.href = '/'; // 로그인 성공 후 리다이렉트
-            } else {
-                const errorText = await response.text();
-                document.getElementById('error').innerText = errorText;
-            }
+        // 응답 처리
+        if (response.ok) {
+            const data = await response.json(); // JSON 형태로 응답을 파싱
+            localStorage.setItem('accessToken', data.accessToken);
+            localStorage.setItem('refreshToken', data.refreshToken);
+            window.location.href = '/'; // 로그인 성공 후 리다이렉트
+        } else {
+            const errorText = await response.text();
+            document.getElementById('error').innerText = '로그인 실패: ' + errorText;
         }
-    </script>
+    }
+</script>
 
-    <form th:action="@{/login}" method="post">
-        <label>아이디를 입력하세요</label><br>
-        <input type="text" id="username" name = "username" required/><br>
+<form method="post" onsubmit="login(event)">
+    <label>아이디를 입력하세요</label><br>
+    <input type="text" id="username" name="username" required/><br>
 
-        <label>비밀 번호를 입력하세요</label><br>
-        <input type="password" id="password" name="password" required/><br>
+    <label>비밀 번호를 입력하세요</label><br>
+    <input type="password" id="password" name="password" required/><br>
 
-        <br>
-        <button type="submit">로그인</button>
-    </form>
     <br>
-    <br>
-    <a th:href="@{/static}">홈 화면으로 돌아가기</a>
-    <br>
-    <a th:href="@{/userregform}">회원 가입</a>
+    <button type="submit">로그인</button>
+</form>
+<br>
+<a th:href="@{/}">홈 화면으로 돌아가기</a>
+<br>
+<a th:href="@{/userregform}">회원 가입</a>
 </body>
 </html>

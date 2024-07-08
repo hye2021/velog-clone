@@ -30,17 +30,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http // HttpSecurity를 사용하여 보안 설정
-                // JWT 인증 필터 설정 -> UsernamePasswordAuthenticationFilter 앞에 위치 (우선순위 설정)
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenizer), UsernamePasswordAuthenticationFilter.class)
                 // 커스텀 예외 처리 설정
                 .exceptionHandling(exceptionHandling ->
                         exceptionHandling.authenticationEntryPoint(customAuthenticationEntryPoint))
                 // 요청에 대한 보안 설정
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/", "/loginform", "/login", "userreg", "logout", "userregform", "userreg").permitAll() // 루트 경로, 로그인 페이지, 회원가입 페이지, 로그아웃 페이지는 모두 허용
+                                .requestMatchers("/", "/css/**" ,"/js/**", "/api/**",
+                                        "/loginform","/login","/logout",
+                                        "/userregform", "/userreg", "/error").permitAll()
                                 .requestMatchers("/@{username}", "@{username}/**").permitAll() // 사용자 페이지는 모두 허용
-                                .requestMatchers("/api/**").permitAll()
                                 .anyRequest().authenticated() // 그 외의 요청은 인증된 사용자만 허용
                 )
                 // CSRF 보안 설정
@@ -58,7 +57,9 @@ public class SecurityConfig {
                                 .configurationSource(corsConfigurationSource()))
                 // HTTP Basic 설정
                 .httpBasic(httpSecurityHttpBasicConfigurer ->
-                        httpSecurityHttpBasicConfigurer.disable()); // HTTP Basic 사용하지 않음 -> 왜? REST API에서 사용하지 않기 때문
+                        httpSecurityHttpBasicConfigurer.disable()) // HTTP Basic 사용하지 않음 -> 왜? REST API에서 사용하지 않기 때문
+                // JWT 인증 필터 설정 -> UsernamePasswordAuthenticationFilter 앞에 위치 (우선순위 설정)
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenizer), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

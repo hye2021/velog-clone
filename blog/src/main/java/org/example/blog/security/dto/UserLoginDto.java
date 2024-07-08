@@ -16,6 +16,5 @@ public class UserLoginDto {
     private String username;
 
     @NotEmpty(message = "password is required")
-    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{1,20}$") // 숫자, 영문, 특수문자를 포함한 1자 이상 20자 이하
     private String password;
 }
