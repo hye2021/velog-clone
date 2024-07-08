@@ -1,4 +1,4 @@
-package org.example.blog.security.jwt;
+package org.example.blog.security.jwt.token;
 
 import lombok.Getter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;

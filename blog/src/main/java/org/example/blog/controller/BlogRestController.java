@@ -10,7 +10,7 @@ import org.example.blog.security.dto.UserLoginDto;
 import org.example.blog.security.dto.UserLoginResponseDto;
 import org.example.blog.entity.RefreshToken;
 import org.example.blog.entity.Role;
-import org.example.blog.security.jwt.JwtTokenizer;
+import org.example.blog.security.jwt.util.JwtTokenizer;
 import org.example.blog.service.RefreshTokenService;
 import org.example.blog.service.UserService;
 import org.springframework.http.HttpStatus;

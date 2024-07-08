@@ -29,7 +29,7 @@ public class BlogController {
 
     @GetMapping("/loginform")
     public String loginform(Model model) {
-        return "loginform";
+        return "user/loginform";
     }
 
 

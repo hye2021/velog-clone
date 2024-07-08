@@ -1,4 +1,4 @@
-package org.example.blog.security.jwt;
+package org.example.blog.security.jwt.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

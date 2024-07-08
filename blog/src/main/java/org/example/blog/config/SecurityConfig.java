@@ -1,9 +1,9 @@
 package org.example.blog.config;
 
 import lombok.RequiredArgsConstructor;
-import org.example.blog.security.jwt.CustomAuthenticationEntryPoint;
-import org.example.blog.security.jwt.JwtAuthenticationFilter;
-import org.example.blog.security.jwt.JwtTokenizer;
+import org.example.blog.security.jwt.exception.CustomAuthenticationEntryPoint;
+import org.example.blog.security.jwt.filter.JwtAuthenticationFilter;
+import org.example.blog.security.jwt.util.JwtTokenizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
