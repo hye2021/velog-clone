@@ -32,7 +32,6 @@
         // 응답 처리
         if (response.ok) {
             const data = await response.json(); // JSON 형태로 응답을 파싱
-            localStorage.setItem('accessToken', data.accessToken);
             localStorage.setItem('refreshToken', data.refreshToken);
             window.location.href = '/'; // 로그인 성공 후 리다이렉트
         } else {
