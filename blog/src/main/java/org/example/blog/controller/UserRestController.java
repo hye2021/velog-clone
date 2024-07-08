@@ -36,6 +36,33 @@ public class UserRestController {
     private final JwtTokenizer jwtTokenizer;
     private final RefreshTokenService refreshTokenService;
 
+    @GetMapping("/check-auth")
+    public ResponseEntity<String> checkAuth(HttpServletRequest httpServletRequest) {
+        String token = getTokenFromCookies(httpServletRequest);
+        if (token != null) {
+            try {
+                Claims claims = jwtTokenizer.parseAccessToken(token);
+                String username = claims.get("username", String.class);
+                return ResponseEntity.ok(username);
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
+            }
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+    }
+
+    private String getTokenFromCookies(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("accessToken".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody @Valid UserLoginDto loginDto, // form -> jwt
                                 BindingResult bindingResult, // 유효성 검사 결과
