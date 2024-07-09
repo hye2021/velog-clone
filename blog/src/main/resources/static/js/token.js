@@ -1,32 +1,39 @@
+// static/js/token.js
+
 function refreshAccessToken() {
     console.log('Refreshing Access Token');
-    fetch('api/users/refreshToken', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({}) // Refresh Token은 보내지 않음
-    })
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                throw new Error('Failed to refresh Access Token');
-            }
+    return new Promise((resolve, reject) => {
+        fetch('/api/users/refreshToken', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({}) // Refresh Token은 보내지 않음
         })
-        .then(data => {
-            if (data.accessToken) {
-                console.log('Access Token refreshed successfully');
-                localStorage.setItem('lastRefreshTime', new Date().getTime());
-                // 갱신된 토큰을 쿠키에 저장
-                document.cookie = `accessToken=${data.accessToken}; path=/; HttpOnly`;
-            } else {
-                console.log('Failed to refresh Access Token2');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Failed to refresh Access Token');
+                }
+            })
+            .then(data => {
+                if (data.accessToken) {
+                    console.log('Access Token refreshed successfully');
+                    localStorage.setItem('lastRefreshTime', new Date().getTime());
+                    // 갱신된 토큰을 쿠키에 저장
+                    document.cookie = `accessToken=${data.accessToken}; path=/; HttpOnly`;
+                    resolve(true);
+                } else {
+                    console.log('Failed to refresh Access Token2');
+                    resolve(false);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                resolve(false);
+            });
+    });
 }
 
 function initTokenRefresh() {
@@ -35,7 +42,7 @@ function initTokenRefresh() {
     const currentTime = new Date().getTime();
     const timeElapsed = currentTime - lastRefreshTime;
 
-    // 마지막 갱신 후 5분이 지났다면 즉시 갱신
+    // 마지막 갱신 후 25분이 지났다면 즉시 갱신
     if (timeElapsed >= 5 * 60 * 1000) {
         refreshAccessToken();
     }
@@ -46,13 +53,12 @@ function initTokenRefresh() {
         const currentTime = new Date().getTime();
         const timeElapsed = currentTime - lastRefreshTime;
 
-        // 5분이 지난 경우에만 갱신
+        // 25분이 지난 경우에만 갱신
         if (timeElapsed >= 5 * 60 * 1000) {
             refreshAccessToken();
         }
     }, 1 * 60 * 1000); // 매 1분마다 체크
 }
-
 
 function handleFormSubmit(event) {
     event.preventDefault(); // 폼 제출 기본 동작 방지
