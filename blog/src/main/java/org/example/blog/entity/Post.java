@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.sql.Timestamp;
 import java.util.HashSet;
@@ -13,7 +14,7 @@ import java.util.Set;
 @Table(name = "posts")
 @NoArgsConstructor // JPA에서는 기본 생성자가 필수이다.
 @AllArgsConstructor // DTO를 위한 생성자
-@Getter
+@Getter @Setter
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
