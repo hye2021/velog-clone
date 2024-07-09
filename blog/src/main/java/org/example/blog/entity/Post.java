@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "posts")
@@ -39,4 +41,12 @@ public class Post {
 
     @Column(name = "thumbnail_path")
     private String thumbnailPath;
+    
+    @ManyToMany(fetch = FetchType.LAZY) // Post 엔티티를 로드할 때 관련 모든 'Tag' 엔티티로 지연 로드함
+    @JoinTable ( // 중간 테이블 정의
+            name = "tags_posts",
+            joinColumns = @JoinColumn(name = "post_id"), // 중간 테이블에서 post_id라는 posts의 id를 참조한 외래키를 사용함
+            inverseJoinColumns = @JoinColumn(name = "tag_id") // 반대 엔티티인 Tag와 중간 테이블 사이의 외래키 관계
+    )
+    private Set<Tag> tags = new HashSet<>();
 }
