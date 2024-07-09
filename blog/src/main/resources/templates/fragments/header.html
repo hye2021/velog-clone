@@ -6,34 +6,81 @@
     <link rel="stylesheet" th:href="@{/css/header.css}">
 </head>
 <body>
-
 <!-- 헤더 -->
 <div th:fragment="header">
-
+    <script th:src="@{/js/checkAuth.js}"></script>
     <header>
         <div>
-            <a th:text="${user.username}" th:href="@{/@{username}(username=${user.username})}" style="color: Black; text-decoration: none; font-size: 24px;"></a>
+            <a th:id = "username" th:text="${user.username}" th:href="@{/@{username}(username=${user.username})}" style="color: Black; text-decoration: none; font-size: 24px;"></a>
         </div>
         <nav>
             <div>
                 <a href="/">알림</a>
                 <a href="/">검색</a>
-                <a href="/write" th:if="${isLogin}" style="color: Black; text-decoration: none;">새 글 작성</a>
 
-                <br>
+                <div id="authLinksDiv"></div>
 
-                <a th:href="@{/loginform}" th:if="${!isLogin}" style="color: Black; text-decoration: none;">로그인</a>
+                <script>
+                    // 로그 찍기
+                    console.log('header.js');
 
-                <div th:if="${isLogin}">
-                    <a href="/"><img th:src="@{/path/to/profile/image}" alt="Profile" class="profile-img"></a>
-                    <div>
-                        <a href="/">내 블로그</a>
-                        <a href="/">임시 글</a>
-                        <a href="/">읽기 목록</a>
-                        <a href="/">설정</a>
-                        <a th:href="@{/logout}">로그아웃</a>
-                    </div>
-                </div>
+                    async function isLoggedIn()
+                    {
+                        const div = document.getElementById('authLinksDiv');
+                        const username = document.getElementById('username').textContent;
+                        div.innerHTML = '';
+
+                        const auth = await checkAuth();
+
+                        if (auth === username) {
+                            console.log('로그인 중');
+                            const writeLink = document.createElement('a');
+                            writeLink.href = "/write";
+                            writeLink.style.color = "Black";
+                            writeLink.style.textDecoration = "none";
+                            writeLink.textContent = "새 글 작성";
+
+                            const profileLink = document.createElement('a');
+                            profileLink.href = "/";
+                            const profileImg = document.createElement('img');
+                            profileImg.src = "/path/to/profile/image";
+                            profileImg.alt = "Profile";
+                            profileImg.className = "profile-img";
+                            profileLink.appendChild(profileImg);
+
+                            const menuDiv = document.createElement('div');
+                            const menuItems = [
+                                { href: "/", text: "내 블로그" },
+                                { href: "/", text: "임시 글" },
+                                { href: "/", text: "읽기 목록" },
+                                { href: "/", text: "설정" },
+                                { href: "/logout", text: "로그아웃" }
+                            ];
+
+                            menuItems.forEach(item => {
+                                const a = document.createElement('a');
+                                a.href = item.href;
+                                a.textContent = item.text;
+                                menuDiv.appendChild(a);
+                            });
+
+                            div.appendChild(writeLink);
+                            div.appendChild(profileLink);
+                            div.appendChild(menuDiv);
+                        } else {
+                            console.log('로그인 안 함');
+                            const loginLink = document.createElement('a');
+                            loginLink.href = "/loginform";
+                            loginLink.style.color = "Black";
+                            loginLink.style.textDecoration = "none";
+                            loginLink.textContent = "로그인";
+                            div.appendChild(loginLink);
+                        }
+                    }
+
+                    window.onload = isLoggedIn;
+                </script>
+
             </div>
         </nav>
         --------------header--------------

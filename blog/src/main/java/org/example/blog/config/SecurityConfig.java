@@ -58,6 +58,7 @@ public class SecurityConfig {
                 // HTTP Basic 설정
                 .httpBasic(httpSecurityHttpBasicConfigurer ->
                         httpSecurityHttpBasicConfigurer.disable()) // HTTP Basic 사용하지 않음 -> 왜? REST API에서 사용하지 않기 때문
+
                 // JWT 인증 필터 설정 -> UsernamePasswordAuthenticationFilter 앞에 위치 (우선순위 설정)
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenizer), UsernamePasswordAuthenticationFilter.class);
 

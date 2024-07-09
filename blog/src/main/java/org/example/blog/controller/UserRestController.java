@@ -37,18 +37,29 @@ public class UserRestController {
     private final RefreshTokenService refreshTokenService;
 
     @GetMapping("/check-auth")
-    public ResponseEntity<String> checkAuth(HttpServletRequest httpServletRequest) {
+    public ResponseEntity<Map<String, String>> checkAuth(HttpServletRequest httpServletRequest) {
+
         String token = getTokenFromCookies(httpServletRequest);
+        Map<String, String> response = new HashMap<>();
+
         if (token != null) {
             try {
                 Claims claims = jwtTokenizer.parseAccessToken(token);
                 String username = claims.get("username", String.class);
-                return ResponseEntity.ok(username);
+
+                log.info("*** check-auth: {}", username);
+                response.put("username", username);
+                return ResponseEntity.ok(response);
             } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
+                log.info("*** check-auth: Invalid token");
+
+                response.put("error", "Invalid token");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
             }
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+        log.info("*** check-auth: Unauthorized");
+        response.put("error", "Unauthorized");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
     private String getTokenFromCookies(HttpServletRequest request) {

@@ -1,6 +1,6 @@
 async function checkAuth() {
     try {
-        const response = await fetch('/api/check-auth', {
+        const response = await fetch('/api/users/check-auth', {
             method: 'GET',
             credentials: 'include', // include cookies in the request
             headers: {
@@ -9,8 +9,8 @@ async function checkAuth() {
         });
 
         if (response.ok) {
-            const username = await response.json();
-            return username;
+            const data = await response.json();
+            return data.username;
         } else {
             return null;
         }
@@ -19,5 +19,3 @@ async function checkAuth() {
         return null;
     }
 }
-
-window.onload = onLoad;
