@@ -11,6 +11,7 @@ import org.example.blog.security.dto.UserLoginResponseDto;
 import org.example.blog.entity.RefreshToken;
 import org.example.blog.entity.Role;
 import org.example.blog.security.jwt.util.JwtTokenizer;
+import org.example.blog.service.BlogService;
 import org.example.blog.service.RefreshTokenService;
 import org.example.blog.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -27,8 +28,9 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 public class BlogRestController {
+    // dependency injection
+    private final BlogService blogService;
 
-    private final UserService userService;
 
 
 }

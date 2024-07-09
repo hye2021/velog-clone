@@ -2,8 +2,10 @@ package org.example.blog.controller;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.blog.entity.User;
+import org.example.blog.service.BlogService;
 import org.example.blog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,20 +17,16 @@ import static org.example.blog.statics.Constants.*;
 
 @Controller
 @Slf4j
+@RequiredArgsConstructor
 public class BlogController {
     private final String PATH = "blog/";
 
-    @Autowired
-    private UserService userService;
+    // dependency injection
+    private final UserService userService;
 
     @GetMapping("/")
     public String home() {
         return PATH + "home";
-    }
-
-    @GetMapping("/write")
-    public String write() {
-        return PATH + "write";
     }
 
     @GetMapping("/error")
