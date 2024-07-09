@@ -18,6 +18,9 @@ import org.example.blog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -36,27 +39,26 @@ public class UserRestController {
     private final JwtTokenizer jwtTokenizer;
     private final RefreshTokenService refreshTokenService;
 
-    @GetMapping("/check-auth")
-    public ResponseEntity<Map<String, String>> checkAuth(HttpServletRequest httpServletRequest) {
-
-        String token = getTokenFromCookies(httpServletRequest);
+    @GetMapping("/check-auth") // Security Context Holder에 저장된 정보
+    public ResponseEntity<Map<String, String>> checkAuth() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Map<String, String> response = new HashMap<>();
 
-        if (token != null) {
-            try {
-                Claims claims = jwtTokenizer.parseAccessToken(token);
-                String username = claims.get("username", String.class);
+        if (authentication != null && authentication.isAuthenticated()) {
+            Object principal = authentication.getPrincipal();
+            String username;
 
-                log.info("*** check-auth: {}", username);
-                response.put("username", username);
-                return ResponseEntity.ok(response);
-            } catch (Exception e) {
-                log.info("*** check-auth: Invalid token");
-
-                response.put("error", "Invalid token");
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            if (principal instanceof UserDetails) {
+                username = ((UserDetails) principal).getUsername();
+            } else {
+                username = principal.toString();
             }
+
+            log.info("*** check-auth: {}", username);
+            response.put("username", username);
+            return ResponseEntity.ok(response);
         }
+
         log.info("*** check-auth: Unauthorized");
         response.put("error", "Unauthorized");
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
