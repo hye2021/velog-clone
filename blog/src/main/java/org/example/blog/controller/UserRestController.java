@@ -137,7 +137,7 @@ public class UserRestController {
         return new ResponseEntity(loginResponse, HttpStatus.OK);
     }
 
-    @PostMapping("/refrechToken") // Access Token이 만료되었을 때, Refresh Token을 사용하여 새로운 Access Token 발급
+    @PostMapping("/refreshToken") // Access Token이 만료되었을 때, Refresh Token을 사용하여 새로운 Access Token 발급
     public ResponseEntity requestRefresh(HttpServletRequest httpServletRequest,
                                          HttpServletResponse httpServletResponse) {
 
