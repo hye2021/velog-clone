@@ -53,6 +53,10 @@
             font-weight: bold;
             margin-bottom: 1em;
         }
+        .list-group-item.active {
+            background-color: #007bff;
+            color: white;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
@@ -81,7 +85,7 @@
                 </div>
 
                 <!-- hidden fields -->
-                <input type="hidden" id="seriesInput" name="str_series">
+                <input type="hidden" id="seriesIdInput" name="series.id">
             </form>
         </div>
         <div class="col">
@@ -136,10 +140,11 @@
         const contentTextarea = document.getElementById('content');
         const previewTitle = document.getElementById('preview-title');
         const previewContent = document.getElementById('preview-content');
-        const seriesInput = document.getElementById('seriesInput');
+        const seriesIdInput = document.getElementById('seriesIdInput');
         const finalPublishButton = document.getElementById('finalPublishButton');
         const newSeriesInput = document.getElementById('newSeriesInput');
         const seriesList = document.getElementById('seriesList');
+        let selectedSeriesId = null;
 
         function updatePreview() {
             const titleText = titleInput.value;
@@ -156,8 +161,8 @@
         updatePreview();
 
         finalPublishButton.addEventListener('click', function () {
-            // 시리즈 값을 폼에 설정
-            document.getElementById('seriesInput').value = newSeriesInput.value;
+            // 시리즈 ID 값을 폼에 설정
+            document.getElementById('seriesIdInput').value = selectedSeriesId;
 
             // 폼 제출
             document.getElementById('postForm').submit();
@@ -171,8 +176,17 @@
                     seriesList.innerHTML = ''; // 기존 목록 지우기
                     series.forEach(item => {
                         const li = document.createElement('li');
-                        li.className = 'list-group-item';
-                        li.textContent = item.name;
+                        li.className = 'list-group-item list-group-item-action';
+                        li.textContent = item.title;
+                        li.dataset.seriesId = item.id;
+                        li.addEventListener('click', function() {
+                            const previouslySelected = seriesList.querySelector('.active');
+                            if (previouslySelected) {
+                                previouslySelected.classList.remove('active');
+                            }
+                            li.classList.add('active');
+                            selectedSeriesId = item.id; // 선택한 시리즈 ID 설정
+                        });
                         seriesList.appendChild(li);
                     });
                 } else {
