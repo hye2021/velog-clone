@@ -1,6 +1,7 @@
 package org.example.blog.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.blog.entity.Post;
 import org.example.blog.entity.Series;
 import org.example.blog.entity.Tag;
@@ -14,11 +15,10 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.example.blog.service.UserService;
 
-import java.sql.Timestamp;
-
 @RestController
 @RequestMapping("/api/posts")
 @RequiredArgsConstructor
+@Slf4j
 public class PostRestController {
     private final PostService postService;
     private final UserService userService;
@@ -59,9 +59,7 @@ public class PostRestController {
             for (String tag : tags) {
                 if (!tag.startsWith("#"))
                     continue;
-                Tag newTag = new Tag();
-                newTag.setName(tag.substring(1)); // # 제외
-                newTag.setUser(user);
+                Tag newTag = postService.saveTag(tag, user);
                 post.getTags().add(newTag);
             }
         }

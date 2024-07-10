@@ -64,12 +64,12 @@ public class UserRestController {
                 username = principal.toString();
             }
 
-            log.info("*** check-auth: {}", username);
+            log.info("*** [check-auth] {}", username);
             response.put("username", username);
             return ResponseEntity.ok(response);
         }
 
-        log.info("*** check-auth: Unauthorized");
+        log.info("*** [check-auth] Unauthorized");
         response.put("error", "Unauthorized");
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }

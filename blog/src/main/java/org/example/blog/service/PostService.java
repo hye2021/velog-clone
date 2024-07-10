@@ -3,6 +3,7 @@ package org.example.blog.service;
 import org.example.blog.entity.Post;
 import org.example.blog.entity.Series;
 import org.example.blog.entity.Tag;
+import org.example.blog.entity.User;
 import org.example.blog.repository.PostRepository;
 import org.example.blog.repository.SeriesRepository;
 import org.example.blog.repository.TagRepository;
@@ -42,8 +43,19 @@ public class PostService {
     }
 
     @Transactional
-    public Tag saveTag(Tag tag) {
+    public Tag saveTag(String name, User user) {
+        Tag tag = getTagByUserId(name, user.getId());
+        if (tag != null)
+            return tag;
+        tag = new Tag();
+        tag.setName(name.substring(1)); // # 제외
+        tag.setUser(user);
         return tagRepository.save(tag);
+    }
+
+    @Transactional(readOnly = true)
+    public Tag getTagByUserId(String tag, Long userId) {
+        return tagRepository.findByNameAndUserId(tag, userId).orElse(null);
     }
 
     @Transactional

@@ -42,7 +42,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter { // OncePerRe
                                     FilterChain filterChain) throws ServletException, IOException {
 
         String token = getToken(request);
-        log.info("*** token : {}", token);
+        log.info("*** [Jwt Authentication Filter] token : {}", token);
 
         if(StringUtils.hasText(token)){
             try{
@@ -69,7 +69,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter { // OncePerRe
                 throw new BadCredentialsException("JWT filter internal exception", e);
             }
         }
-        log.info("*** token is not found");
         filterChain.doFilter(request, response); // 다음 필터로 이동
     }
 
