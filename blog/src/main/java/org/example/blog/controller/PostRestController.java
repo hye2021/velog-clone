@@ -44,6 +44,12 @@ public class PostRestController {
         if (authentication == null) {
             return null;
         }
+
+        // 필수 요소 : title
+        if (postDto.getTitle() == null || postDto.getTitle().trim().isEmpty()) {
+            return null;
+        }
+
         // User
         String username = authentication.getName();
         User user = userService.getUsersByUsername(username);
@@ -60,11 +66,17 @@ public class PostRestController {
             Series series = postService.getSeriesById(postDto.getSeriesId());
             post.setSeries(series);
         } else if (postDto.getNewSeriesTitle() != null) {
-            Series series = new Series();
-            series.setTitle(postDto.getNewSeriesTitle());
-            series.setUser(user);
-            postService.saveSeries(series);
-            post.setSeries(series);
+            log.info("      new series title: " + postDto.getNewSeriesTitle());
+            // 만약에 title이 공백밖에 없다면 -> 대체 왜이러는지는 모르겠다만..
+            if (postDto.getNewSeriesTitle().trim().isEmpty())
+                postDto.setNewSeriesTitle(null);
+            else {
+                Series series = new Series();
+                series.setTitle(postDto.getNewSeriesTitle());
+                series.setUser(user);
+                postService.saveSeries(series);
+                post.setSeries(series);
+            }
         }
 
         // tag 설정
@@ -76,15 +88,6 @@ public class PostRestController {
                 Tag newTag = postService.saveTag(tag, user);
                 post.getTags().add(newTag);
             }
-        }
-
-        // Thumbnail 저장
-        MultipartFile thumbnail = postDto.getThumbnail();
-        log.info("*** [thumbnail] " + thumbnail + " ***");
-        if (thumbnail != null && !thumbnail.isEmpty()) {
-            log.info("      thumbnail is not null");
-            String thumbnailPath = postService.saveThumbnailImg(thumbnail);
-            post.setThumbnailPath(thumbnailPath);
         }
 
         // Post 저장

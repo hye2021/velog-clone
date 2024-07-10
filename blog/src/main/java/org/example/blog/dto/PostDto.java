@@ -15,5 +15,5 @@ public class PostDto {
     private Long seriesId;
     private String newSeriesTitle;
     private boolean publishStatus;
-    private MultipartFile thumbnail;
+    private String thumbnail;
 }

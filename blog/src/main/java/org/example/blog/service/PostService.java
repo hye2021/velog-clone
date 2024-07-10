@@ -31,6 +31,7 @@ public class PostService {
         return postRepository.save(post);
     }
 
+    @Transactional
     public String saveThumbnailImg(MultipartFile thumbnail) {
         String thumbnailPath = System.getProperty("user.home") + "/myBlogImages/thumbnails";
         File pathDir = new File(thumbnailPath);
@@ -56,6 +57,7 @@ public class PostService {
         }
     }
 
+    @Transactional
     public Tag saveTag(String name, User user) {
         Tag tag = getTagByUserId(name, user.getId());
         if (tag != null)
@@ -66,14 +68,17 @@ public class PostService {
         return tagRepository.save(tag);
     }
 
+    @Transactional(readOnly = true)
     public Tag getTagByUserId(String tag, Long userId) {
         return tagRepository.findByNameAndUserId(tag, userId).orElse(null);
     }
 
+    @Transactional
     public Series saveSeries(Series series) {
         return seriesRepository.save(series);
     }
 
+    @Transactional(readOnly = true)
     public Series getSeriesById(Long seriesId) {
         return seriesRepository.findById(seriesId).orElse(null);
     }
