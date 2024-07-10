@@ -26,6 +26,8 @@ public class PostRestController {
 
     @PostMapping("/thumbnail")
     public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file) {
+        log.info("*** [upload thumbnail file] : " + file.getOriginalFilename());
+
         if (file.isEmpty())
             return ResponseEntity.badRequest().body("empty file");
 
@@ -88,6 +90,11 @@ public class PostRestController {
                 Tag newTag = postService.saveTag(tag, user);
                 post.getTags().add(newTag);
             }
+        }
+
+        // 썸네일 경로
+        if (postDto.getThumbnail() != null) {
+            post.setThumbnailPath(postDto.getThumbnail());
         }
 
         // Post 저장
