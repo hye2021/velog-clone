@@ -7,6 +7,7 @@ import org.example.blog.entity.Series;
 import org.example.blog.entity.Tag;
 import org.example.blog.entity.User;
 import org.example.blog.service.PostService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,19 @@ import org.example.blog.service.UserService;
 public class PostRestController {
     private final PostService postService;
     private final UserService userService;
+
+    @PostMapping("/thumbnail")
+    public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file) {
+        if (file.isEmpty())
+            return ResponseEntity.badRequest().body("empty file");
+
+        try {
+            String thumbnailPath = postService.saveThumbnailImg(file);
+            return ResponseEntity.ok().body(thumbnailPath);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Failed to save thumbnail image");
+        }
+    }
 
     @PostMapping
     public PostDto createPost(@ModelAttribute PostDto postDto,
@@ -66,7 +80,9 @@ public class PostRestController {
 
         // Thumbnail 저장
         MultipartFile thumbnail = postDto.getThumbnail();
+        log.info("*** [thumbnail] " + thumbnail + " ***");
         if (thumbnail != null && !thumbnail.isEmpty()) {
+            log.info("      thumbnail is not null");
             String thumbnailPath = postService.saveThumbnailImg(thumbnail);
             post.setThumbnailPath(thumbnailPath);
         }

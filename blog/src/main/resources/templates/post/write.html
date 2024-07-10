@@ -148,6 +148,7 @@
         const newSeriesTitleInput = document.getElementById('newSeriesTitleInput');
         const seriesList = document.getElementById('seriesList');
         const publishStatus = document.getElementById('publishStatus');
+        const thumbnailInput = document.getElementById('thumbnail');
         let selectedSeriesId = null;
 
         function updatePreview() {
@@ -172,6 +173,10 @@
 
             // 폼 데이터 생성
             const formData = new FormData(document.getElementById('postForm'));
+            // 썸네일 파일 추가
+            if (thumbnailInput.files.length > 0) {
+                formData.append('thumbnail', thumbnailInput.files[0]);
+            }
 
             console.log('Form Data Entries:');
             formData.forEach((value, key) => {
