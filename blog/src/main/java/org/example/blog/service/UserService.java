@@ -2,7 +2,9 @@ package org.example.blog.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.blog.entity.Role;
+import org.example.blog.entity.Series;
 import org.example.blog.entity.User;
+import org.example.blog.repository.SeriesRepository;
 import org.example.blog.repository.UserRepository;
 import org.example.blog.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -19,7 +22,9 @@ public class UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final SeriesRepository seriesRepository;
 
+// User
     public Iterable<User> getAllUsers() {
         return userRepository.findAll();
     }
@@ -74,4 +79,9 @@ public class UserService {
     public boolean checkPassword(User user, String password) {
         return user.getPassword().equals(password);
     }
+
+    public List<Series> getSeriesByUser(Long userId) {
+        return seriesRepository.findByUserId(userId);
+    }
+
 }

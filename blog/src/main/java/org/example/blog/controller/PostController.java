@@ -3,6 +3,7 @@ package org.example.blog.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.blog.entity.Post;
+import org.example.blog.entity.Series;
 import org.example.blog.entity.Tag;
 import org.example.blog.entity.User;
 import org.example.blog.service.PostService;
@@ -37,11 +38,9 @@ public class PostController {
     @PostMapping("/upload") // upload post
     public String upload(@ModelAttribute(name = "post") Post post,
                          @RequestParam(name = "str_tags", required = false, defaultValue = "") String strTags,
+                         @RequestParam(name = "str_series", required = false, defaultValue = "") String newSeries,
                          RedirectAttributes redirectAttributes) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        log.info("*** authentication: {}", authentication);
-
         if (authentication == null) {
             redirectAttributes.addFlashAttribute("errorMessage", "로그인이 정보가 없습니다.");
             return "redirect:/error";
@@ -56,10 +55,13 @@ public class PostController {
         {
             String[] tags = strTags.split(" ");
             for (String tag : tags) {
+                if (!tag.startsWith("#"))
+                    continue;
                 log.info("*** tag: {}", tag);
                 Tag newTag = new Tag();
                 newTag.setName(tag);
                 newTag.setUser(user);
+
                 postService.saveTag(newTag);
                 post.getTags().add(newTag);
             }
@@ -68,9 +70,19 @@ public class PostController {
         }
 
         // todo: 임시글 여부
-        post.setPublishStatus(true);
+        post.setPublishStatus(false);
 
         // todo: 시리즈
+        if (!newSeries.isEmpty()) {
+            log.info("*** newSeries: {}", newSeries);
+            Series series = new Series();
+            series.setTitle(newSeries);
+            series.setUser(user);
+            postService.saveSeries(series);
+            // post의 시리즈로 지정
+            post.setSeries(series);
+        }
+
         // todo: 썸네일
 
         postService.savePost(post);

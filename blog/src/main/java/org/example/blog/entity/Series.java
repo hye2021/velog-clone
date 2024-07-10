@@ -1,11 +1,14 @@
 package org.example.blog.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "series")
 @NoArgsConstructor // JPA에서는 기본 생성자가 필수이다.
+@Getter @Setter
 public class Series {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

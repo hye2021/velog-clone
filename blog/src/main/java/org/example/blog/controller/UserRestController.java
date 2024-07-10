@@ -9,13 +9,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.blog.entity.RefreshToken;
 import org.example.blog.entity.Role;
+import org.example.blog.entity.Series;
 import org.example.blog.entity.User;
 import org.example.blog.security.dto.UserLoginDto;
 import org.example.blog.security.dto.UserLoginResponseDto;
 import org.example.blog.security.jwt.util.JwtTokenizer;
 import org.example.blog.service.RefreshTokenService;
 import org.example.blog.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -38,6 +38,16 @@ public class UserRestController {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenizer jwtTokenizer;
     private final RefreshTokenService refreshTokenService;
+
+    @GetMapping("/{username}/series")
+    public ResponseEntity<List<Series>> getSeriesByUserUsername(@PathVariable(name = "username") String username) {
+        User user = userService.getUsersByUsername(username);
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        List<Series> series = userService.getSeriesByUser(user.getId());
+        return new ResponseEntity<>(series, HttpStatus.OK);
+    }
 
     @GetMapping("/check-auth") // Security Context Holder에 저장된 정보
     public ResponseEntity<Map<String, String>> checkAuth() {
