@@ -40,52 +40,6 @@ public class PostController {
                          @RequestParam(name = "str_tags", required = false, defaultValue = "") String strTags,
                          @RequestParam(name = "str_series", required = false, defaultValue = "") String newSeries,
                          RedirectAttributes redirectAttributes) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null) {
-            redirectAttributes.addFlashAttribute("errorMessage", "로그인이 정보가 없습니다.");
-            return "redirect:/error";
-        }
-
-        // User 설정
-        User user = userService.getUsersByUsername(authentication.getName());
-        post.setUser(user);
-
-        // 태그 설정
-        if(!strTags.isEmpty())
-        {
-            String[] tags = strTags.split(" ");
-            for (String tag : tags) {
-                if (!tag.startsWith("#"))
-                    continue;
-                log.info("*** tag: {}", tag);
-                Tag newTag = new Tag();
-                newTag.setName(tag);
-                newTag.setUser(user);
-
-                postService.saveTag(newTag);
-                post.getTags().add(newTag);
-            }
-        } else {
-            log.info("*** strTags is empty");
-        }
-
-        // todo: 임시글 여부
-        post.setPublishStatus(false);
-
-        // todo: 시리즈
-        if (!newSeries.isEmpty()) {
-            log.info("*** newSeries: {}", newSeries);
-            Series series = new Series();
-            series.setTitle(newSeries);
-            series.setUser(user);
-            postService.saveSeries(series);
-            // post의 시리즈로 지정
-            post.setSeries(series);
-        }
-
-        // todo: 썸네일
-
-        postService.savePost(post);
-        return "redirect:/"; // todo
+        return "redirect:/";
     }
 }

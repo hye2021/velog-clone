@@ -9,8 +9,11 @@ import org.example.blog.repository.TagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.sql.Timestamp;
+import java.util.List;
 
 @Service
 public class PostService {
@@ -25,6 +28,20 @@ public class PostService {
     }
 
     @Transactional
+    public String saveThumbnailImg(MultipartFile thumbnail) {
+        String thumbnailPath = "images/thumbnails";
+        String filename = thumbnail.getOriginalFilename();
+        File uploadFile = new File(thumbnailPath, filename);
+
+        try {
+            thumbnail.transferTo(uploadFile);
+            return uploadFile.getAbsolutePath();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to save thumbnail image", e);
+        }
+    }
+
+    @Transactional
     public Tag saveTag(Tag tag) {
         return tagRepository.save(tag);
     }
@@ -33,4 +50,10 @@ public class PostService {
     public Series saveSeries(Series series) {
         return seriesRepository.save(series);
     }
+
+    @Transactional(readOnly = true)
+    public Series getSeriesById(Long seriesId) {
+        return seriesRepository.findById(seriesId).orElse(null);
+    }
+
 }
