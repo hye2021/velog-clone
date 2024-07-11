@@ -24,20 +24,22 @@ public class BlogController {
     // dependency injection
     private final UserService userService;
 
+// Home Page
     @GetMapping("/")
     public String home() {
+        return "redirect:/recent";
+    }
+
+    @GetMapping("/{page}")
+    public String homePage(@PathVariable("page") String page,
+                           Model model) {
+        model.addAttribute("page", page);
         return PATH + "home";
     }
 
-    @GetMapping("/error")
-    public String error(Model model) {
-        String errorMessage = (String) model.getAttribute("errorMessage");
-        if (errorMessage != null) {
-            model.addAttribute("errorMessage", errorMessage);
-        }
-        return "error";
-    }
 
+
+// User Page
     @GetMapping("/@{username}")
     public String userBlog(@PathVariable("username") String username,
                            RedirectAttributes redirectAttributes) {
@@ -62,5 +64,14 @@ public class BlogController {
         }
         model.addAttribute("page", page);
         return PATH + "blog";
+    }
+
+    @GetMapping("/error")
+    public String error(Model model) {
+        String errorMessage = (String) model.getAttribute("errorMessage");
+        if (errorMessage != null) {
+            model.addAttribute("errorMessage", errorMessage);
+        }
+        return "error";
     }
 }
