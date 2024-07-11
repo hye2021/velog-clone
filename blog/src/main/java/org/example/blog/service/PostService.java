@@ -34,17 +34,17 @@ public class PostService {
 
     @Transactional
     public String saveThumbnailImg(MultipartFile thumbnail) {
-        String thumbnailPath = Constants.IMAGE_PAHT + "/thumbnails";
+        String thumbnailPath = "/thumbnails";
         return SaveImageAs(thumbnail, thumbnailPath);
     }
 
-    public String saveImage(MultipartFile image) {
-        String imagePath = Constants.IMAGE_PAHT + "/images";
+    public String saveImage(MultipartFile image, User user) {
+        String imagePath = "/images/" + user.getId();
         return SaveImageAs(image, imagePath);
     }
 
     public String SaveImageAs(MultipartFile image, String path) {
-        File pathDir = new File(path);
+        File pathDir = new File(Constants.IMAGE_PAHT + path);
 
         // 디렉토리가 존재하지 않으면 생성
         if (!pathDir.exists()) {
@@ -55,11 +55,11 @@ public class PostService {
         }
 
         // 파일 저장
-        File uploadFile = new File(path, image.getOriginalFilename());
+        File uploadFile = new File(pathDir, image.getOriginalFilename());
         log.info("      uploadFile path: " + uploadFile.getAbsolutePath());
         try {
             image.transferTo(uploadFile);
-            return uploadFile.getAbsolutePath();
+            return path + "/" + image.getOriginalFilename();
         } catch (Exception e) {
             log.error("      can not upload the thumbnail image: " + e);
             throw new RuntimeException("Failed to save thumbnail image", e);

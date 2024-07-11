@@ -31,13 +31,24 @@ public class PostRestController {
         if (file.isEmpty())
             return ResponseEntity.badRequest().body("empty file");
 
+        // 현재 user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            return ResponseEntity.badRequest().body("Failed to get current user");
+        }
+        String username = authentication.getName();
+        User user = userService.getUsersByUsername(username);
+
+        // 파일 업로드
         try {
-            String thumbnailPath = postService.saveImage(file);
+            String thumbnailPath = postService.saveImage(file, user);
             return ResponseEntity.ok().body(thumbnailPath);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Failed to save a image");
         }
     }
+
+    @GetMapping("/image/{userId}")
 
     @PostMapping("/thumbnail")
     public ResponseEntity<String> handleThumbnailUpload(@RequestParam("file") MultipartFile file) {
