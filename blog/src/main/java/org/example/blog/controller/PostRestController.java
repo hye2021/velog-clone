@@ -17,6 +17,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.example.blog.service.UserService;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/posts")
 @RequiredArgsConstructor
@@ -24,6 +26,13 @@ import org.example.blog.service.UserService;
 public class PostRestController {
     private final PostService postService;
     private final UserService userService;
+
+    @GetMapping("/recent")
+    public ResponseEntity<List<Post>> getRecentPosts(@RequestParam(value = "page", defaultValue = "0") int page,
+                                                     @RequestParam(value = "size", defaultValue = "10") int size) {
+        List<Post> posts = postService.getRecentPosts(page, size);
+        return ResponseEntity.ok(posts);
+    }
 
     @PostMapping("/image")
     public ResponseEntity<String> handleImageUpload(@RequestParam("file") MultipartFile file) {

@@ -10,6 +10,10 @@ import org.example.blog.repository.SeriesRepository;
 import org.example.blog.repository.TagRepository;
 import org.example.blog.statics.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +29,14 @@ public class PostService {
     @Autowired private PostRepository postRepository;
     @Autowired private TagRepository tagRepository;
     @Autowired private SeriesRepository seriesRepository;
+
+    @Transactional(readOnly = true)
+    public List<Post> getRecentPosts(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("updateTime").descending()
+                        .and(Sort.by("id").descending()));
+        Page<Post> postPage =  postRepository.findAll(pageable);
+        return postPage.getContent();
+    }
 
     @Transactional
     public Post savePost(Post post) {

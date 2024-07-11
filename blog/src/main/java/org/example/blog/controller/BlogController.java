@@ -38,7 +38,6 @@ public class BlogController {
     }
 
 
-
 // User Page
     @GetMapping("/@{username}")
     public String userBlog(@PathVariable("username") String username,
