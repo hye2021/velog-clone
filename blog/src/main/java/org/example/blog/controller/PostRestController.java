@@ -1,5 +1,6 @@
 package org.example.blog.controller;
 
+import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.blog.entity.Post;
@@ -37,28 +38,32 @@ public class PostRestController {
             return ResponseEntity.badRequest().body("Failed to get current user");
         }
         String username = authentication.getName();
-        User user = userService.getUsersByUsername(username);
 
         // 파일 업로드
         try {
-            String thumbnailPath = postService.saveImage(file, user);
+            String thumbnailPath = postService.saveImage(file, username);
             return ResponseEntity.ok().body(thumbnailPath);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Failed to save a image");
         }
     }
 
-    @GetMapping("/image/{userId}")
-
     @PostMapping("/thumbnail")
     public ResponseEntity<String> handleThumbnailUpload(@RequestParam("file") MultipartFile file) {
         log.info("*** [upload thumbnail file] : " + file.getOriginalFilename());
 
+        // 현재 user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            return ResponseEntity.badRequest().body("Failed to get current user");
+        }
+        String username = authentication.getName();
+
+        // 파일 업로드
         if (file.isEmpty())
             return ResponseEntity.badRequest().body("empty file");
-
         try {
-            String thumbnailPath = postService.saveThumbnailImg(file);
+            String thumbnailPath = postService.saveThumbnailImg(file, username);
             return ResponseEntity.ok().body(thumbnailPath);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Failed to save thumbnail image");
@@ -119,7 +124,7 @@ public class PostRestController {
         }
 
         // 썸네일 경로
-        if (postDto.getThumbnail() != null) {
+        if (postDto.getThumbnail() != null && !postDto.getThumbnail().isEmpty()) {
             post.setThumbnailPath(postDto.getThumbnail());
         }
 

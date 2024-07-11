@@ -53,6 +53,10 @@
             font-weight: bold;
             margin-bottom: 1em;
         }
+        .preview img {
+            max-width: 100%;
+            height: auto;
+        }
         .list-group-item.active {
             background-color: #007bff;
             color: white;
@@ -164,6 +168,13 @@
 
             previewTitle.textContent = titleText;
             previewContent.innerHTML = marked.parse(markdownText);
+
+            // 이미지 크기를 조절
+            const images = previewContent.querySelectorAll('img');
+            images.forEach(img => {
+                img.style.maxWidth = '100%';
+                img.style.height = 'auto';
+            });
         }
 
         titleInput.addEventListener('input', updatePreview);

@@ -33,13 +33,13 @@ public class PostService {
     }
 
     @Transactional
-    public String saveThumbnailImg(MultipartFile thumbnail) {
-        String thumbnailPath = "/thumbnails";
+    public String saveThumbnailImg(MultipartFile thumbnail, String username) {
+        String thumbnailPath = "/thumbnails" + username;
         return SaveImageAs(thumbnail, thumbnailPath);
     }
 
-    public String saveImage(MultipartFile image, User user) {
-        String imagePath = "/images/" + user.getId();
+    public String saveImage(MultipartFile image, String username) {
+        String imagePath = "/images/" + username;
         return SaveImageAs(image, imagePath);
     }
 
