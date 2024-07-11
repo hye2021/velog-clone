@@ -24,8 +24,23 @@ public class PostRestController {
     private final PostService postService;
     private final UserService userService;
 
+    @PostMapping("/image")
+    public ResponseEntity<String> handleImageUpload(@RequestParam("file") MultipartFile file) {
+        log.info("*** [upload image file] : " + file.getOriginalFilename());
+
+        if (file.isEmpty())
+            return ResponseEntity.badRequest().body("empty file");
+
+        try {
+            String thumbnailPath = postService.saveImage(file);
+            return ResponseEntity.ok().body(thumbnailPath);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Failed to save a image");
+        }
+    }
+
     @PostMapping("/thumbnail")
-    public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<String> handleThumbnailUpload(@RequestParam("file") MultipartFile file) {
         log.info("*** [upload thumbnail file] : " + file.getOriginalFilename());
 
         if (file.isEmpty())

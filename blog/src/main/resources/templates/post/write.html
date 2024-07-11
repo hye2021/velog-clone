@@ -102,6 +102,8 @@
 </div>
 
 <div class="floating-bar">
+    <input type="file" id="imageUploadInput" style="display: none;">
+    <button type="button" class="btn btn-secondary" id="imageUploadButton">이미지 삽입</button>
     <button type="button" class="btn btn-secondary">임시저장</button>
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#publishModal">출간하기</button>
 </div>
@@ -152,6 +154,8 @@
         const publishStatus = document.getElementById('publishStatus');
         const thumbnailInput = document.getElementById('thumbnailFile');
         const thumbnailPathInput = document.getElementById('thumbnailPath');
+        const imageUploadInput = document.getElementById('imageUploadInput');
+        const imageUploadButton = document.getElementById('imageUploadButton');
         let selectedSeriesId = null;
 
         function updatePreview() {
@@ -167,6 +171,44 @@
 
         // 초기 미리보기 업데이트
         updatePreview();
+
+        // 이미지 업로드 버튼 이벤트 리스너
+        imageUploadButton.addEventListener('click', async function () {
+            imageUploadInput.click();
+        });
+
+        // 이미지 업로드 이벤트 리스너
+        imageUploadInput.addEventListener('change', async function () {
+            const file = imageUploadInput.files[0];
+            if (!file) {
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch('/api/posts/image', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (response.ok) {
+                    const imagePath = await response.text();
+                    console.log('Image uploaded successfully:', imagePath);
+
+                    // 이미지 URL을 컨텐츠에 삽입
+                    const imageUrl = `![image](${imagePath})  `;
+                    const currentContent = contentTextarea.value;
+                    contentTextarea.value = `${currentContent}\n${imageUrl}`;
+                    updatePreview();
+                } else {
+                    console.error('Failed to upload image:', response.status);
+                }
+            } catch (error) {
+                console.error('Error uploading image:', error);
+            }
+        });
 
         thumbnailInput.addEventListener('change', async function () {
             const file = thumbnailInput.files[0];

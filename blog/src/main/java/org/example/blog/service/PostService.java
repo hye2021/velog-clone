@@ -8,6 +8,7 @@ import org.example.blog.entity.User;
 import org.example.blog.repository.PostRepository;
 import org.example.blog.repository.SeriesRepository;
 import org.example.blog.repository.TagRepository;
+import org.example.blog.statics.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,8 +34,17 @@ public class PostService {
 
     @Transactional
     public String saveThumbnailImg(MultipartFile thumbnail) {
-        String thumbnailPath = System.getProperty("user.home") + "/myBlogImages/thumbnails";
-        File pathDir = new File(thumbnailPath);
+        String thumbnailPath = Constants.IMAGE_PAHT + "/thumbnails";
+        return SaveImageAs(thumbnail, thumbnailPath);
+    }
+
+    public String saveImage(MultipartFile image) {
+        String imagePath = Constants.IMAGE_PAHT + "/images";
+        return SaveImageAs(image, imagePath);
+    }
+
+    public String SaveImageAs(MultipartFile image, String path) {
+        File pathDir = new File(path);
 
         // 디렉토리가 존재하지 않으면 생성
         if (!pathDir.exists()) {
@@ -45,11 +55,10 @@ public class PostService {
         }
 
         // 파일 저장
-        File uploadFile = new File(thumbnailPath, thumbnail.getOriginalFilename());
+        File uploadFile = new File(path, image.getOriginalFilename());
         log.info("      uploadFile path: " + uploadFile.getAbsolutePath());
-
         try {
-            thumbnail.transferTo(uploadFile);
+            image.transferTo(uploadFile);
             return uploadFile.getAbsolutePath();
         } catch (Exception e) {
             log.error("      can not upload the thumbnail image: " + e);
