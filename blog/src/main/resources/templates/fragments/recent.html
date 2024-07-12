@@ -2,12 +2,97 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>최신 포스트</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .post {
+            margin-bottom: 20px;
+        }
+        .card {
+            height: 400px; /* 고정된 세로 크기 */
+            display: flex;
+            flex-direction: column;
+        }
+        .card-body {
+            overflow: auto; /* 내용이 넘칠 경우 스크롤바 표시 */
+            flex-grow: 1;
+        }
+        .card img {
+            height: 150px; /* 이미지 고정 높이 */
+            object-fit: cover; /* 이미지가 고정된 높이에 맞게 조정되도록 */
+        }
+        #loader {
+            display: none;
+            text-align: center;
+            padding: 10px 0;
+        }
+    </style>
 </head>
 <body>
 <div th:fragment="list">
     <h1>최신 포스트</h1>
+    <div class="container">
+        <div id="post-container" class="row">
+            <!-- 게시글이 추가될 영역 -->
+        </div>
+        <div id="loader">Loading...</div>
+    </div>
 
+    <script>
+        let page = 0;
+        const size = 10;
+        let isLoading = false;
 
+        async function loadPosts() {
+            if (isLoading) return; // 이미 로딩 중이면 추가 요청 방지
+            isLoading = true;
+            document.getElementById('loader').style.display = 'block';
+            try {
+                const response = await fetch(`/api/posts/recent?page=${page}&size=${size}`);
+                if (!response.ok) {
+                    throw new Error('Failed to load posts.');
+                }
+                const posts = await response.json();
+                posts.forEach(post => {
+                    const postContainer = document.createElement('div');
+                    postContainer.className = 'col-md-4 post';
+                    postContainer.innerHTML = `
+                        <div class="card" style="width: 18rem;">
+                            ${post.thumbnailPath ? `<img src="${post.thumbnailPath}" class="card-img-top" alt="Thumbnail">` : ''}
+                            <div class="card-body">
+                                <h5 class="card-title">${post.title}</h5>
+                                <p class="card-text">${new Date(post.updateTime).toLocaleString()}</p>
+                                <a href="#" class="btn btn-primary">게시글 보러 가기</a>
+                            </div>
+                        </div>
+                    `;
+                    document.getElementById('post-container').appendChild(postContainer);
+                });
+                document.getElementById('loader').style.display = 'none';
+                if (posts.length > 0) {
+                    page++;
+                }
+                isLoading = false;
+            } catch (error) {
+                console.error(error);
+                document.getElementById('loader').style.display = 'none';
+                isLoading = false;
+                alert('Failed to load posts.');
+            }
+        }
+
+        window.addEventListener('scroll', function() {
+            if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 100) {
+                loadPosts();
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPosts();
+        });
+    </script>
 </div>
 </body>
 </html>

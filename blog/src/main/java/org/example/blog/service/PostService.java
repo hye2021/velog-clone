@@ -46,7 +46,7 @@ public class PostService {
 
     @Transactional
     public String saveThumbnailImg(MultipartFile thumbnail, String username) {
-        String thumbnailPath = "/thumbnails" + username;
+        String thumbnailPath = "/thumbnails/" + username;
         return SaveImageAs(thumbnail, thumbnailPath);
     }
 
