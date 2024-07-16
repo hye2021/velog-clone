@@ -65,6 +65,11 @@ public class PostService {
         return postPage.getContent();
     }
 
+    @Transactional(readOnly = true)
+    public List<Post> getSavedPosts(String username) {
+        return postRepository.findByUserUsernameAndPublishStatus(username, false);
+    }
+
     @Transactional
     public Post savePost(Post post) {
         post.setUpdateTime(new Timestamp(System.currentTimeMillis()));

@@ -25,6 +25,69 @@ import java.util.List;
 public class PostRestController {
     private final PostService postService;
 
+    @PostMapping
+    public PostDto createPost(@ModelAttribute PostDto postDto,
+                              RedirectAttributes redirectAttributes) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            return null;
+        }
+
+        // 필수 요소 : title
+        if (postDto.getTitle() == null || postDto.getTitle().trim().isEmpty()) {
+            return null;
+        }
+
+        // User
+        String username = authentication.getName();
+        User user = postService.getUsersByUsername(username);
+
+        // Post 기본 설정
+        Post post = new Post();
+        post.setUser(user);
+        post.setTitle(postDto.getTitle());
+        post.setContent(postDto.getContent());
+        post.setPublishStatus(postDto.isPublishStatus());
+
+        // post 시리즈 설정
+        if (postDto.getSeriesId() != null) {
+            Series series = postService.getSeriesById(postDto.getSeriesId());
+            post.setSeries(series);
+        } else if (postDto.getNewSeriesTitle() != null) {
+            log.info("      new series title: " + postDto.getNewSeriesTitle());
+            // 만약에 title이 공백밖에 없다면 -> 대체 왜이러는지는 모르겠다만..
+            if (postDto.getNewSeriesTitle().trim().isEmpty())
+                postDto.setNewSeriesTitle(null);
+            else {
+                Series series = new Series();
+                series.setTitle(postDto.getNewSeriesTitle());
+                series.setUser(user);
+                postService.saveSeries(series);
+                post.setSeries(series);
+            }
+        }
+
+        // tag 설정
+        if (postDto.getTags() != null && !postDto.getTags().isEmpty()) {
+            String[] tags = postDto.getTags().split(" ");
+            for (String tag : tags) {
+                if (!tag.startsWith("#"))
+                    continue;
+                Tag newTag = postService.saveTag(tag, user);
+                post.getTags().add(newTag);
+            }
+        }
+
+        // 썸네일 경로
+        if (postDto.getThumbnail() != null && !postDto.getThumbnail().isEmpty()) {
+            post.setThumbnailPath(postDto.getThumbnail());
+        }
+
+        // Post 저장
+        postService.savePost(post);
+        return postDto;
+    }
+
     @GetMapping("/recent")
     public ResponseEntity<List<Post>> getRecentPosts(@RequestParam(value = "page", defaultValue = "0") int page,
                                                      @RequestParam(value = "size", defaultValue = "10") int size,
@@ -68,66 +131,4 @@ public class PostRestController {
         }
     }
 
-    @PostMapping
-    public PostDto createPost(@ModelAttribute PostDto postDto,
-                              RedirectAttributes redirectAttributes) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null) {
-            return null;
-        }
-
-        // 필수 요소 : title
-        if (postDto.getTitle() == null || postDto.getTitle().trim().isEmpty()) {
-            return null;
-        }
-
-        // User
-        String username = authentication.getName();
-        User user = postService.getUsersByUsername(username);
-
-        // Post 기본 설정
-        Post post = new Post();
-        post.setUser(user);
-        post.setTitle(postDto.getTitle());
-        post.setContent(postDto.getContent());
-        post.setPublishStatus(postDto.isPublishStatus());
-        
-        // post 시리즈 설정
-        if (postDto.getSeriesId() != null) {
-            Series series = postService.getSeriesById(postDto.getSeriesId());
-            post.setSeries(series);
-        } else if (postDto.getNewSeriesTitle() != null) {
-            log.info("      new series title: " + postDto.getNewSeriesTitle());
-            // 만약에 title이 공백밖에 없다면 -> 대체 왜이러는지는 모르겠다만..
-            if (postDto.getNewSeriesTitle().trim().isEmpty())
-                postDto.setNewSeriesTitle(null);
-            else {
-                Series series = new Series();
-                series.setTitle(postDto.getNewSeriesTitle());
-                series.setUser(user);
-                postService.saveSeries(series);
-                post.setSeries(series);
-            }
-        }
-
-        // tag 설정
-        if (postDto.getTags() != null && !postDto.getTags().isEmpty()) {
-            String[] tags = postDto.getTags().split(" ");
-            for (String tag : tags) {
-                if (!tag.startsWith("#"))
-                    continue;
-                Tag newTag = postService.saveTag(tag, user);
-                post.getTags().add(newTag);
-            }
-        }
-
-        // 썸네일 경로
-        if (postDto.getThumbnail() != null && !postDto.getThumbnail().isEmpty()) {
-            post.setThumbnailPath(postDto.getThumbnail());
-        }
-
-        // Post 저장
-        postService.savePost(post);
-        return postDto;
-    }
 }

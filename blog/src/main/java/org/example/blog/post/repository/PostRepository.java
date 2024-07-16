@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findByUserUsername(String username, Pageable pageable);
@@ -20,4 +21,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "ORDER BY COUNT(l.user_id) DESC",
             nativeQuery = true)
     Page<Post> findTrendingPosts(@Param("startTime") Timestamp startTime, Pageable pageable);
+
+    List<Post> findByUserUsernameAndPublishStatus(String username, boolean publishStatus);
 }
