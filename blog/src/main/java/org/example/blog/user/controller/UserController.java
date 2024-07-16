@@ -51,7 +51,7 @@ public class UserController {
         try {
             userService.createUser(user);
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage" , "회원 가입 실패");
+            redirectAttributes.addFlashAttribute("errorMessage" , e);
             return "redirect:/error";
         }
 

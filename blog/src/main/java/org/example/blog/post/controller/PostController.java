@@ -36,8 +36,8 @@ public class PostController {
 
     @GetMapping("/images/{username}/{filename:.+}")
     @ResponseBody
-    public ResponseEntity<Resource> serveFile(@PathVariable(name ="username") String username,
-                                              @PathVariable(name ="filename") String filename) {
+    public ResponseEntity<Resource> serveFile(@PathVariable(name ="username", required = true) String username,
+                                              @PathVariable(name ="filename", required = true) String filename) {
         try {
             Path path = Paths.get(Constants.IMAGE_PAHT + "/images/" + username + "/" + filename);
             Resource resource = new UrlResource(path.toUri());

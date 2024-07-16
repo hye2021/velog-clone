@@ -30,6 +30,18 @@ public class PostRestController {
                                                      @RequestParam(value = "size", defaultValue = "10") int size,
                                                      @RequestParam(value = "username", defaultValue = "", required = false) String username) {
         List<Post> posts = postService.getRecentPosts(page, size, username);
+        if(posts == null)
+            return ResponseEntity.badRequest().body(null);
+        return ResponseEntity.ok(posts);
+    }
+
+    @GetMapping("/trending")
+    public ResponseEntity<List<Post>> getTrendingPosts(@RequestParam(value = "page", defaultValue = "0") int page,
+                                                       @RequestParam(value = "size", defaultValue = "10") int size,
+                                                       @RequestParam(value = "period", defaultValue = "7", required = false) int period) {
+        List<Post> posts = postService.getTrendingPosts(page, size, period);
+        if(posts == null)
+            return ResponseEntity.badRequest().body(null);
         return ResponseEntity.ok(posts);
     }
 

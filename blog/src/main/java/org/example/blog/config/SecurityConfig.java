@@ -36,7 +36,7 @@ public class SecurityConfig {
                 // 요청에 대한 보안 설정
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/css/**" ,"/js/**", "/api/**",
+                                .requestMatchers("/css/**" ,"/js/**", "/images/**", "/api/**",
                                         "/", "/recent", "/trending", "/feed",
                                         "/loginform","/login","/logout",
                                         "/userregform", "/userreg", "/error").permitAll()

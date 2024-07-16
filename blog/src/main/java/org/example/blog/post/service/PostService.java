@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -49,6 +50,18 @@ public class PostService {
         } else {
             postPage = postRepository.findAll(pageable);
         }
+        return postPage.getContent();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Post> getTrendingPosts(int page, int size, int period) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime startTime = now.minusDays(period);
+        Timestamp timestamp = Timestamp.valueOf(startTime);
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Post> postPage = postRepository.findTrendingPosts(timestamp, pageable);
+
         return postPage.getContent();
     }
 
