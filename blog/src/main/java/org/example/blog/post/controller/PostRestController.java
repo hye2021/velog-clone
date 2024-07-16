@@ -7,6 +7,7 @@ import org.example.blog.post.entity.Series;
 import org.example.blog.post.entity.Tag;
 import org.example.blog.user.entity.User;
 import org.example.blog.post.service.PostService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -129,6 +130,16 @@ public class PostRestController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Failed to save a image");
         }
+    }
+
+    @GetMapping("/{username}/series")
+    public ResponseEntity<List<Series>> getSeriesByUserUsername(@PathVariable(name = "username") String username) {
+        User user = postService.getUsersByUsername(username);
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        List<Series> series = postService.getSeriesByUser(user.getId());
+        return new ResponseEntity<>(series, HttpStatus.OK);
     }
 
 }

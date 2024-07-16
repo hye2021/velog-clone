@@ -40,16 +40,6 @@ public class UserRestController {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenizer jwtTokenizer;
 
-    @GetMapping("/{username}/series")
-    public ResponseEntity<List<Series>> getSeriesByUserUsername(@PathVariable(name = "username") String username) {
-        User user = userService.getUsersByUsername(username);
-        if (user == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        List<Series> series = userService.getSeriesByUser(user.getId());
-        return new ResponseEntity<>(series, HttpStatus.OK);
-    }
-
     @GetMapping("/check-auth") // Security Context Holder에 저장된 정보
     public ResponseEntity<Map<String, String>> checkAuth() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

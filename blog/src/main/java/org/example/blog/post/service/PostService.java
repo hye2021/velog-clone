@@ -136,4 +136,7 @@ public class PostService {
         return seriesRepository.findById(seriesId).orElse(null);
     }
 
+    public List<Series> getSeriesByUser(Long userId) {
+        return seriesRepository.findByUserId(userId);
+    }
 }

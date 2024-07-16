@@ -313,7 +313,7 @@
 
         async function fetchSeriesList(username) {
             try {
-                const response = await fetch(`/api/users/${username}/series`);
+                const response = await fetch(`/api/posts/${username}/series`);
                 if (response.ok) {
                     const series = await response.json();
                     seriesList.innerHTML = ''; // 기존 목록 지우기

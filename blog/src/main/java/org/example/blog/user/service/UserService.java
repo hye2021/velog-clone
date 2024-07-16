@@ -79,8 +79,4 @@ public class UserService {
         return user.getPassword().equals(password);
     }
 
-    public List<Series> getSeriesByUser(Long userId) {
-        return seriesRepository.findByUserId(userId);
-    }
-
 }
