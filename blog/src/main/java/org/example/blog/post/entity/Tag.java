@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.example.blog.user.entity.User;
+import java.util.Set;
+import java.util.HashSet;
 
 @Entity
 @Table(name = "tags")
@@ -20,4 +22,7 @@ public class Tag {
     @ManyToOne // 하나의 User는 여러 개의 Tag를 가질 수 있다.
     @JoinColumn(name = "user_id", nullable = false) // 외래키 정의
     private User user;
+
+    @ManyToMany(mappedBy = "tags") // Post 엔티티의 tags 필드에 의해 매핑됨
+    private Set<Post> posts = new HashSet<>();
 }

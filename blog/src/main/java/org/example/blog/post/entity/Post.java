@@ -51,4 +51,12 @@ public class Post {
             inverseJoinColumns = @JoinColumn(name = "tag_id") // 반대 엔티티인 Tag와 중간 테이블 사이의 외래키 관계
     )
     private Set<Tag> tags = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "likes",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private Set<User> likes = new HashSet<>();
 }

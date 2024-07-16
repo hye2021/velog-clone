@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.example.blog.post.entity.Post;
 
 import java.net.URL;
 import java.sql.Timestamp;
@@ -47,6 +48,15 @@ public class User {
         inverseJoinColumns = @JoinColumn(name = "role_id") // 반대 엔티티인 Role과 중간 테이블 사이의 외래키 관계
     )
     private Set<Role> roles = new HashSet<>();
+
+    @OneToMany(mappedBy = "fromUser")
+    private Set<Follow> following;
+
+    @OneToMany(mappedBy = "toUser")
+    private Set<Follow> followers;
+
+    @ManyToMany(mappedBy = "likes")
+    private Set<Post> likedPosts;
 
     public User(String username, String password, String name, String email, Timestamp registrationDate) {
         this.username = username;
