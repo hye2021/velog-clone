@@ -24,12 +24,12 @@ import java.util.List;
 @Slf4j
 public class PostRestController {
     private final PostService postService;
-    private final UserService userService;
 
     @GetMapping("/recent")
     public ResponseEntity<List<Post>> getRecentPosts(@RequestParam(value = "page", defaultValue = "0") int page,
-                                                     @RequestParam(value = "size", defaultValue = "10") int size) {
-        List<Post> posts = postService.getRecentPosts(page, size);
+                                                     @RequestParam(value = "size", defaultValue = "10") int size,
+                                                     @RequestParam(value = "username", defaultValue = "", required = false) String username) {
+        List<Post> posts = postService.getRecentPosts(page, size, username);
         return ResponseEntity.ok(posts);
     }
 
@@ -71,7 +71,7 @@ public class PostRestController {
 
         // User
         String username = authentication.getName();
-        User user = userService.getUsersByUsername(username);
+        User user = postService.getUsersByUsername(username);
 
         // Post 기본 설정
         Post post = new Post();

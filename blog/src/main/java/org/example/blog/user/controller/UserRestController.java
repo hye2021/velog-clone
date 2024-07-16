@@ -35,9 +35,10 @@ import java.util.HashMap;
 @Slf4j
 public class UserRestController {
     private final UserService userService;
+    private final RefreshTokenService refreshTokenService;
+
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenizer jwtTokenizer;
-    private final RefreshTokenService refreshTokenService;
 
     @GetMapping("/{username}/series")
     public ResponseEntity<List<Series>> getSeriesByUserUsername(@PathVariable(name = "username") String username) {

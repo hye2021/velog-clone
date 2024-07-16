@@ -1,5 +1,6 @@
 package org.example.blog.post.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.blog.post.entity.Post;
 import org.example.blog.post.entity.Series;
@@ -9,6 +10,7 @@ import org.example.blog.post.repository.PostRepository;
 import org.example.blog.post.repository.SeriesRepository;
 import org.example.blog.post.repository.TagRepository;
 import org.example.blog.statics.Constants;
+import org.example.blog.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,16 +26,29 @@ import java.util.List;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class PostService {
-    @Autowired private PostRepository postRepository;
-    @Autowired private TagRepository tagRepository;
-    @Autowired private SeriesRepository seriesRepository;
+    private final UserService userService;
+
+    private final PostRepository postRepository;
+    private final TagRepository tagRepository;
+    private final SeriesRepository seriesRepository;
+
+    public User getUsersByUsername(String username) {
+        return userService.getUsersByUsername(username);
+    }
 
     @Transactional(readOnly = true)
-    public List<Post> getRecentPosts(int page, int size) {
+    public List<Post> getRecentPosts(int page, int size, String username) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("updateTime").descending()
                         .and(Sort.by("id").descending()));
-        Page<Post> postPage =  postRepository.findAll(pageable);
+
+        Page<Post> postPage;
+        if (username != null && !username.isEmpty()) {
+            postPage = postRepository.findByUserUsername(username, pageable);
+        } else {
+            postPage = postRepository.findAll(pageable);
+        }
         return postPage.getContent();
     }
 
