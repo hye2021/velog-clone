@@ -46,7 +46,8 @@ public class BlogController {
         redirectAttributes.addFlashAttribute("user", user);
         return "redirect:/@" + username + "/" + "posts";
     }
-    @GetMapping("/@{username}/{page}")
+
+/*    @GetMapping("/@{username}/{page}")
     public String userPage(@PathVariable("username") String username,
                            @PathVariable("page") String page,
                            Model model) {
@@ -58,7 +59,7 @@ public class BlogController {
         model.addAttribute("username", username);
         model.addAttribute("page", page);
         return PATH + "blog";
-    }
+    }*/
 
     @GetMapping("/error")
     public String error(Model model) {
