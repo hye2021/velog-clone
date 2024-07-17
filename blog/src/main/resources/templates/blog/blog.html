@@ -3,24 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <title>My Blog</title>
+    <link href="/css/blog.css" rel="stylesheet">
     <script>
         function navigateTo(page) {
             var username = document.getElementById('username').value;
-            location.href = '/@' + username + '/' + page;
+            console.log("username : " + username);
+            // location.href = '/@' + username + '/' + page;
         }
     </script>
 </head>
 <body>
-    <!-- header -->
-    <div th:replace="~{fragments/header_user :: header}"></div>
+<!-- header -->
+<div th:replace="~{fragments/header_user :: header}"></div>
 
-    <h1 th:text="${user.username} + '의 블로그'"></h1>
-    <!-- 버튼 -->
-    <input type="hidden" id="username" th:value="${user.username}" />
-    <button onclick="navigateTo('posts')">글</button>
-    <button onclick="navigateTo('series')">시리즈</button>
-    <button onclick="navigateTo('about')">소개</button>
+<h1 th:text="${username} + '의 블로그'"></h1>
+<!-- 버튼 -->
+<input type="hidden" id="username" th:value="${username}" />
+<p th:text="${username}"></p>
+<button th:onclick="navigateTo('posts')">글</button>
+<button onclick="navigateTo('series')">시리즈</button>
+<button onclick="navigateTo('about')">소개</button>
 
-    <main th:replace="'fragments/'+${page} :: content"></main>
+<main th:replace="'fragments/'+${page} :: content"></main>
 </body>
 </html>

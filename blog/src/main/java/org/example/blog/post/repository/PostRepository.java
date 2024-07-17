@@ -13,6 +13,14 @@ import java.util.List;
 public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findByUserUsername(String username, Pageable pageable);
 
+    Page<Post> findByPublishStatus(boolean publishStatus, Pageable pageable);
+
+    Post findByIdAndPublishStatus(Long id, boolean publishStatus);
+
+    List<Post> findByUserUsernameAndPublishStatus(String username, boolean publishStatus);
+
+    Page<Post> findByUserUsernameAndPublishStatus(String username, boolean publishStatus, Pageable pageable);
+
     // JPQL + Spring Data JPA
     @Query(value = "SELECT p.* FROM posts p " +
             "LEFT JOIN likes l ON p.id = l.post_id " +
@@ -21,6 +29,4 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "ORDER BY COUNT(l.user_id) DESC",
             nativeQuery = true)
     Page<Post> findTrendingPosts(@Param("startTime") Timestamp startTime, Pageable pageable);
-
-    List<Post> findByUserUsernameAndPublishStatus(String username, boolean publishStatus);
 }

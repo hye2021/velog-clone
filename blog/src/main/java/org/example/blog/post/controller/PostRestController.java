@@ -2,20 +2,21 @@ package org.example.blog.post.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.blog.post.dto.PostCardDto;
 import org.example.blog.post.entity.Post;
 import org.example.blog.post.entity.Series;
 import org.example.blog.post.entity.Tag;
 import org.example.blog.user.entity.User;
 import org.example.blog.post.service.PostService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.example.blog.post.dto.PostDto;
+import org.example.blog.post.dto.PostCreateDto;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.example.blog.user.service.UserService;
 
 import java.util.List;
 
@@ -27,15 +28,15 @@ public class PostRestController {
     private final PostService postService;
 
     @PostMapping
-    public PostDto createPost(@ModelAttribute PostDto postDto,
-                              RedirectAttributes redirectAttributes) {
+    public PostCreateDto createPost(@ModelAttribute PostCreateDto postCreateDto,
+                                    RedirectAttributes redirectAttributes) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null) {
             return null;
         }
 
         // 필수 요소 : title
-        if (postDto.getTitle() == null || postDto.getTitle().trim().isEmpty()) {
+        if (postCreateDto.getTitle() == null || postCreateDto.getTitle().trim().isEmpty()) {
             return null;
         }
 
@@ -46,22 +47,22 @@ public class PostRestController {
         // Post 기본 설정
         Post post = new Post();
         post.setUser(user);
-        post.setTitle(postDto.getTitle());
-        post.setContent(postDto.getContent());
-        post.setPublishStatus(postDto.isPublishStatus());
+        post.setTitle(postCreateDto.getTitle());
+        post.setContent(postCreateDto.getContent());
+        post.setPublishStatus(postCreateDto.isPublishStatus());
 
         // post 시리즈 설정
-        if (postDto.getSeriesId() != null) {
-            Series series = postService.getSeriesById(postDto.getSeriesId());
+        if (postCreateDto.getSeriesId() != null) {
+            Series series = postService.getSeriesById(postCreateDto.getSeriesId());
             post.setSeries(series);
-        } else if (postDto.getNewSeriesTitle() != null) {
-            log.info("      new series title: " + postDto.getNewSeriesTitle());
+        } else if (postCreateDto.getNewSeriesTitle() != null) {
+            log.info("      new series title: " + postCreateDto.getNewSeriesTitle());
             // 만약에 title이 공백밖에 없다면 -> 대체 왜이러는지는 모르겠다만..
-            if (postDto.getNewSeriesTitle().trim().isEmpty())
-                postDto.setNewSeriesTitle(null);
+            if (postCreateDto.getNewSeriesTitle().trim().isEmpty())
+                postCreateDto.setNewSeriesTitle(null);
             else {
                 Series series = new Series();
-                series.setTitle(postDto.getNewSeriesTitle());
+                series.setTitle(postCreateDto.getNewSeriesTitle());
                 series.setUser(user);
                 postService.saveSeries(series);
                 post.setSeries(series);
@@ -69,8 +70,8 @@ public class PostRestController {
         }
 
         // tag 설정
-        if (postDto.getTags() != null && !postDto.getTags().isEmpty()) {
-            String[] tags = postDto.getTags().split(" ");
+        if (postCreateDto.getTags() != null && !postCreateDto.getTags().isEmpty()) {
+            String[] tags = postCreateDto.getTags().split(" ");
             for (String tag : tags) {
                 if (!tag.startsWith("#"))
                     continue;
@@ -80,33 +81,43 @@ public class PostRestController {
         }
 
         // 썸네일 경로
-        if (postDto.getThumbnail() != null && !postDto.getThumbnail().isEmpty()) {
-            post.setThumbnailPath(postDto.getThumbnail());
+        if (postCreateDto.getThumbnail() != null && !postCreateDto.getThumbnail().isEmpty()) {
+            post.setThumbnailPath(postCreateDto.getThumbnail());
         }
 
         // Post 저장
         postService.savePost(post);
-        return postDto;
+        return postCreateDto;
     }
 
     @GetMapping("/recent")
-    public ResponseEntity<List<Post>> getRecentPosts(@RequestParam(value = "page", defaultValue = "0") int page,
+    public ResponseEntity<Page<PostCardDto>> getRecentPosts(@RequestParam(value = "page", defaultValue = "0") int page,
                                                      @RequestParam(value = "size", defaultValue = "10") int size,
                                                      @RequestParam(value = "username", defaultValue = "", required = false) String username) {
-        List<Post> posts = postService.getRecentPosts(page, size, username);
-        if(posts == null)
-            return ResponseEntity.badRequest().body(null);
-        return ResponseEntity.ok(posts);
+        Page<Post> posts = postService.getRecentPosts(page, size, username);
+        if(posts == null) {
+            log.info("*** end post");
+            return ResponseEntity.noContent().build();
+        }
+
+        Page<PostCardDto> postCardDtos = postService.getPostCardDtos(posts);
+        log.info("*** [postCardDtos] size: " + size + ", page: " + page + ", username: ");
+        for (PostCardDto postCardDto : postCardDtos) {
+            log.info("    [postCardDto] : " + postCardDto.getTitle());
+        }
+        return ResponseEntity.ok(postCardDtos);
     }
 
     @GetMapping("/trending")
-    public ResponseEntity<List<Post>> getTrendingPosts(@RequestParam(value = "page", defaultValue = "0") int page,
+    public ResponseEntity<Page<PostCardDto>> getTrendingPosts(@RequestParam(value = "page", defaultValue = "0") int page,
                                                        @RequestParam(value = "size", defaultValue = "10") int size,
                                                        @RequestParam(value = "period", defaultValue = "7", required = false) int period) {
-        List<Post> posts = postService.getTrendingPosts(page, size, period);
+        Page<Post> posts = postService.getTrendingPosts(page, size, period);
         if(posts == null)
             return ResponseEntity.badRequest().body(null);
-        return ResponseEntity.ok(posts);
+
+        Page<PostCardDto> postCardDtos = postService.getPostCardDtos(posts);
+        return ResponseEntity.ok(postCardDtos);
     }
 
     @PostMapping("/image")

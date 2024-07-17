@@ -2,6 +2,7 @@ package org.example.blog.post.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.blog.post.dto.PostCardDto;
 import org.example.blog.post.entity.Post;
 import org.example.blog.post.entity.Series;
 import org.example.blog.post.entity.Tag;
@@ -40,21 +41,26 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public List<Post> getRecentPosts(int page, int size, String username) {
+    public Post getPostById(Long postId) {
+        return postRepository.findByIdAndPublishStatus(postId, true);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Post> getRecentPosts(int page, int size, String username) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("updateTime").descending()
                         .and(Sort.by("id").descending()));
 
         Page<Post> postPage;
         if (username != null && !username.isEmpty()) {
-            postPage = postRepository.findByUserUsername(username, pageable);
+            postPage = postRepository.findByUserUsernameAndPublishStatus(username, true, pageable);
         } else {
-            postPage = postRepository.findAll(pageable);
+            postPage = postRepository.findByPublishStatus(true, pageable);
         }
-        return postPage.getContent();
+        return postPage;
     }
 
     @Transactional(readOnly = true)
-    public List<Post> getTrendingPosts(int page, int size, int period) {
+    public Page<Post> getTrendingPosts(int page, int size, int period) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime startTime = now.minusDays(period);
         Timestamp timestamp = Timestamp.valueOf(startTime);
@@ -62,7 +68,11 @@ public class PostService {
         Pageable pageable = PageRequest.of(page, size);
         Page<Post> postPage = postRepository.findTrendingPosts(timestamp, pageable);
 
-        return postPage.getContent();
+        return postPage;
+    }
+
+    public Page<PostCardDto> getPostCardDtos(Page<Post> posts) {
+        return posts.map(PostCardDto::new);
     }
 
     @Transactional(readOnly = true)

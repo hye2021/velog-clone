@@ -55,6 +55,7 @@ public class BlogController {
             User user = userService.getUsersByUsername(username);
             model.addAttribute("user", user);
         }
+        model.addAttribute("username", username);
         model.addAttribute("page", page);
         return PATH + "blog";
     }
