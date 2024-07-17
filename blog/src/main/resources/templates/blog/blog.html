@@ -5,10 +5,9 @@
     <title>My Blog</title>
     <link href="/css/blog.css" rel="stylesheet">
     <script>
-        function navigateTo(page) {
-            var username = document.getElementById('username').value;
-            console.log("username : " + username);
-            // location.href = '/@' + username + '/' + page;
+        function navigateTo(page, username) {
+            // console.log("username : " + username);
+            location.href = '/@' + username + '/' + page;
         }
     </script>
 </head>
@@ -18,11 +17,9 @@
 
 <h1 th:text="${username} + '의 블로그'"></h1>
 <!-- 버튼 -->
-<input type="hidden" id="username" th:value="${username}" />
-<p th:text="${username}"></p>
-<button th:onclick="navigateTo('posts')">글</button>
-<button onclick="navigateTo('series')">시리즈</button>
-<button onclick="navigateTo('about')">소개</button>
+<button th:data-username="${username}" onclick="navigateTo('posts', this.dataset.username)">글</button>
+<button th:data-username="${username}" onclick="navigateTo('series', this.dataset.username)">시리즈</button>
+<button th:data-username="${username}" onclick="navigateTo('about', this.dataset.username)">소개</button>
 
 <main th:replace="'fragments/'+${page} :: content"></main>
 </body>
