@@ -42,8 +42,8 @@ function initTokenRefresh() {
     const currentTime = new Date().getTime();
     const timeElapsed = currentTime - lastRefreshTime;
 
-    // 마지막 갱신 후 25분이 지났다면 즉시 갱신
-    if (timeElapsed >= 5 * 60 * 1000) {
+    // 마지막 갱신 후 50분이 지났다면 즉시 갱신
+    if (timeElapsed >= 50 * 60 * 1000) {
         refreshAccessToken();
     }
 
@@ -53,8 +53,8 @@ function initTokenRefresh() {
         const currentTime = new Date().getTime();
         const timeElapsed = currentTime - lastRefreshTime;
 
-        // 25분이 지난 경우에만 갱신
-        if (timeElapsed >= 5 * 60 * 1000) {
+        // 50분이 지난 경우에만 갱신
+        if (timeElapsed >= 50 * 60 * 1000) {
             refreshAccessToken();
         }
     }, 1 * 60 * 1000); // 매 1분마다 체크
