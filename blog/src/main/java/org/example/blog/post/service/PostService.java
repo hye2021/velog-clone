@@ -36,29 +36,75 @@ public class PostService {
     private final TagRepository tagRepository;
     private final SeriesRepository seriesRepository;
 
+
     public User getUsersByUsername(String username) {
         return userService.getUsersByUsername(username);
     }
 
+/* post */
     @Transactional(readOnly = true)
     public Post getPostById(Long postId) {
         return postRepository.findByIdAndPublishStatus(postId, true);
     }
 
-    @Transactional(readOnly = true)
-    public Page<Post> getRecentPosts(int page, int size, String username) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("updateTime").descending()
-                        .and(Sort.by("id").descending()));
+    /* recent */
+    private Pageable createRecentPageable(int page, int size) {
+        return PageRequest.of(page, size, Sort.by("updateTime").descending()
+                .and(Sort.by("id").descending()));
+    }
 
-        Page<Post> postPage;
-        if (username != null && !username.isEmpty()) {
-            postPage = postRepository.findByUserUsernameAndPublishStatus(username, true, pageable);
+    @Transactional(readOnly = true)
+    public Page<Post> getRecentPosts(int page, int size, String username, String tagname) {
+        if (tagname == null || tagname.isEmpty()) {
+            if (username == null || username.isEmpty()) {
+//                  log.info("*** [getRecentPosts] username: null, tagname: null");
+                return getAllRecentPosts(page, size);
+            }
+            else {
+                 log.info("*** [getRecentPosts] username: " + username + ", tagname: null");
+                return getRecentPostsByUsername(page, size, username);
+            }
         } else {
-            postPage = postRepository.findByPublishStatus(true, pageable);
+            if (username == null || username.isEmpty()) {
+//                 log.info("*** [getRecentPosts] username: null, tagname: " + tagname);
+                return getRecentPostsByTag(page, size, tagname);
+            } else {
+//                 log.info("*** [getRecentPosts] username: " + username + ", tagname: " + tagname);
+                return getRecentPostsByUsernameAndTags(page, size, username, tagname);
+            }
         }
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Post> getAllRecentPosts(int page, int size) {
+        Pageable pageable = createRecentPageable(page, size);
+        Page<Post> postPage = postRepository.findByPublishStatus(true, pageable);
         return postPage;
     }
 
+
+    @Transactional(readOnly = true)
+    public Page<Post> getRecentPostsByUsername(int page, int size, String username) {
+        Pageable pageable = createRecentPageable(page, size);
+        Page<Post> postPage = postRepository.findByUserUsernameAndPublishStatus(username, true, pageable);
+        return postPage;
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Post> getRecentPostsByTag(int page, int size, String tag) {
+        Pageable pageable = createRecentPageable(page, size);
+        Page<Post> postPage =  postRepository.findByTagsNameAndPublishStatus(tag, true, pageable);
+        return postPage;
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Post> getRecentPostsByUsernameAndTags(int page, int size, String username, String tagname) {
+        Pageable pageable = createRecentPageable(page, size);
+        Page<Post> postPage = postRepository.findByUserUsernameAndTagsNameAndPublishStatus(username, tagname, true, pageable);
+        return postPage;
+    }
+
+    /* trending... */
     @Transactional(readOnly = true)
     public Page<Post> getTrendingPosts(int page, int size, int period) {
         LocalDateTime now = LocalDateTime.now();
@@ -94,6 +140,7 @@ public class PostService {
         return postRepository.save(post);
     }
 
+/* image */
     @Transactional
     public String saveThumbnailImg(MultipartFile thumbnail, String username) {
         String thumbnailPath = "/thumbnails/" + username;
@@ -128,6 +175,7 @@ public class PostService {
         }
     }
 
+/* tag */
     @Transactional
     public Tag saveTag(String name, User user) {
         Tag tag = getTagByUserId(name, user.getId());
@@ -144,6 +192,12 @@ public class PostService {
         return tagRepository.findByNameAndUserId(tag, userId).orElse(null);
     }
 
+    @Transactional(readOnly = true)
+    public List<Tag> getAllTagsByUser(Long userId) {
+        return tagRepository.findAllByUserId(userId);
+    }
+
+/* series */
     @Transactional
     public Series saveSeries(Series series) {
         return seriesRepository.save(series);

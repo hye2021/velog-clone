@@ -37,6 +37,7 @@ public class PostController {
         return PATH + "write";
     }
 
+
     @GetMapping("/saves") // temporary saved posts list page
     public String getSavedPosts(@AuthenticationPrincipal CustomUserDetails customUserDetails,
                                 Model model) {

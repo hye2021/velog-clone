@@ -19,7 +19,10 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/posts")
@@ -115,18 +118,14 @@ public class PostRestController {
     @GetMapping("/recent")
     public ResponseEntity<Page<PostCardDto>> getRecentPosts(@RequestParam(value = "page", defaultValue = "0") int page,
                                                      @RequestParam(value = "size", defaultValue = "10") int size,
-                                                     @RequestParam(value = "username", defaultValue = "", required = false) String username) {
-        Page<Post> posts = postService.getRecentPosts(page, size, username);
+                                                     @RequestParam(value = "username", defaultValue = "", required = false) String username,
+                                                     @RequestParam(value = "tag", defaultValue = "", required = false) String tag) {
+        Page<Post> posts = postService.getRecentPosts(page, size, username, tag);
         if(posts == null) {
-            log.info("*** end post");
             return ResponseEntity.noContent().build();
         }
-
         Page<PostCardDto> postCardDtos = postService.getPostCardDtos(posts);
-        log.info("*** [postCardDtos] size: " + size + ", page: " + page + ", username: ");
-        for (PostCardDto postCardDto : postCardDtos) {
-            log.info("    [postCardDto] : " + postCardDto.getTitle());
-        }
+
         return ResponseEntity.ok(postCardDtos);
     }
 
@@ -175,6 +174,23 @@ public class PostRestController {
         }
         List<Series> series = postService.getSeriesByUser(user.getId());
         return new ResponseEntity<>(series, HttpStatus.OK);
+    }
+
+    @GetMapping("/{username}/tags")
+    public ResponseEntity<Map<String, List<String>>> getTagsByUserUsername(@PathVariable(name = "username") String username) {
+        User user = postService.getUsersByUsername(username);
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        List<String> tags = new ArrayList<>();
+        for (Tag tag : postService.getAllTagsByUser(user.getId())) {
+            tags.add(tag.getName());
+        }
+
+        Map<String, List<String>> response = new HashMap<>();
+        response.put("content", tags);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 }

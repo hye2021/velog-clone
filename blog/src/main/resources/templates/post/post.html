@@ -38,8 +38,8 @@
 <!--buttons for manage a post-->
 <div class="d-flex justify-content-end">
     <div class="btn-group" role="group" aria-label="Basic example">
-        <button id="btn_remove" type="button" class="btn btn-primary">게시글 삭제</button>
-        <button id="btn_edit" type="button" class="btn btn-primary">게시글 수정</button>
+        <button id="btn_remove" type="button" class="btn btn-primary" style="display: none;">게시글 삭제</button>
+        <button id="btn_edit" type="button" class="btn btn-primary" style="display: none;">게시글 수정</button>
     </div>
 </div>
 
@@ -113,8 +113,8 @@
     }
 
     window.addEventListener('load', async () => {
-        await manageButton();
-        await setupEventListeners();
+        manageButton();
+        setupEventListeners();
     });
 </script>
 

@@ -21,6 +21,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     Page<Post> findByUserUsernameAndPublishStatus(String username, boolean publishStatus, Pageable pageable);
 
+    Page<Post> findByTagsNameAndPublishStatus(String tag, boolean publishStatus, Pageable pageable);
+
+    Page<Post> findByUserUsernameAndTagsNameAndPublishStatus(String username, String tag, boolean publishStatus, Pageable pageable);
+
     // JPQL + Spring Data JPA
     @Query(value = "SELECT p.* FROM posts p " +
             "LEFT JOIN likes l ON p.id = l.post_id " +

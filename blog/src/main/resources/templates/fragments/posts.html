@@ -6,7 +6,131 @@
 <body>
 <div th:fragment="content">
     <h1>Post Page</h1>
-    <p>Here is the content of the post page.</p>
+    <input type="hidden" id="tag">
+
+    <div class="container text-center">
+        <div class="row align-items-start">
+            <div class="col">
+                <h3>tags</h3>
+                <span id="tags"></span>
+            </div>
+            <div class="col">
+                <div id="post-container" class="row">
+                    <!-- 게시글이 추가될 영역 -->
+                </div>
+                <div id="loader"></div>
+            </div>
+            <div class="col">
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        let page = 0;
+        const size = 10;
+        const username = [[${username}]];
+        let isLoading = false;
+
+// post 가져오기
+        async function loadPosts(tag) {
+            console.log('[load posts ... ]');
+            if (isLoading) return; // 이미 로딩 중이면 추가 요청 방지
+
+            console.log('[load posts ... in loading / tag: ' + tag + ']');
+            isLoading = true;
+            document.getElementById('loader').style.display = 'block';
+            try {
+                const response = await fetch(`/api/posts/recent?page=${page}&size=${size}&username=${username}&tag=${tag}`);
+                if (!response.ok) {
+                    throw new Error('Failed to load posts.');
+                }
+                const postCardDtosPage = await response.json();
+                const posts = postCardDtosPage.content;
+                console.log(posts);
+
+                posts.forEach(post => {
+                    const postContainer = document.createElement('div');
+                    postContainer.innerHTML = `
+                        <div class="card" style="width: 50rem;">
+                            ${post.thumbnailPath ? `<img src="${post.thumbnailPath}" class="card-img-top" alt="Thumbnail">` : ''}
+                            <div class="card-body">
+                                <h3 class="card-title">${post.title}</h3>
+                                <p class="card-text">${new Date(post.updateTime).toLocaleString()}</p>
+                                <a href="/@${post.username}/${post.id}" class="btn btn-primary">게시글 보러 가기</a>
+                            </div>
+                        </div>
+                    `;
+                    document.getElementById('post-container').appendChild(postContainer);
+                });
+                document.getElementById('loader').style.display = 'none';
+                if (posts.length > 0) {
+                    page++;
+                }
+                isLoading = false;
+            } catch (error) {
+                console.error(error);
+                document.getElementById('loader').style.display = 'none';
+                isLoading = false;
+                alert('Failed to load posts.');
+            }
+        }
+
+// tag 가져오기
+        async function loadTags() {
+            const span_tags = document.getElementById('tags');
+            try {
+                const response = await fetch(`/api/posts/${username}/tags`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to load tags.');
+                }
+                const data = await response.json();
+                const tags = data.content;
+                tags.forEach(tag => {
+                    console.log(tag); // 각 태그의 이름을 출력
+
+                    const p = document.createElement('button');
+                    p.textContent = '#' + tag;
+                    p.addEventListener('click', function() {
+                        document.getElementById('post-container').innerHTML = '';
+                        document.getElementById('tag').value = tag;
+                        page = 0;
+                        loadPosts(tag);
+                    });
+                    span_tags.appendChild(p);
+
+                    const br = document.createElement('br');
+                    span_tags.appendChild(br);
+                });
+            } catch (error) {
+                console.error(error);
+                alert('Failed to load tags.');
+            }
+        }
+
+
+// 리스너 추가
+        window.addEventListener('scroll', function() {
+            if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 100) {
+                loadPosts();
+            }
+        });
+
+        window.addEventListener('load', async () => {
+            const tag = document.getElementById('tag').value;
+            await loadTags();
+            await loadPosts(tag)
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPosts();
+        });
+    </script>
+
 </div>
 </body>
 </html>
