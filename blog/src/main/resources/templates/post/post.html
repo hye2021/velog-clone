@@ -35,6 +35,14 @@
 <!--header-->
 <div th:replace="~{fragments/header_user :: header}"></div>
 
+<!--buttons for manage a post-->
+<div class="d-flex justify-content-end">
+    <div class="btn-group" role="group" aria-label="Basic example">
+        <button id="btn_remove" type="button" class="btn btn-primary">게시글 삭제</button>
+        <button id="btn_edit" type="button" class="btn btn-primary">게시글 수정</button>
+    </div>
+</div>
+
 <!-- container to center the card -->
 <div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
 
@@ -61,6 +69,46 @@
         </div>
     </div>
 </div>
+
+<script th:src="@{/js/checkAuth.js}"></script>
+<script th:inline="javascript">
+    const btn_remove = document.getElementById('btn_remove');
+    const btn_edit = document.getElementById('btn_edit');
+
+    btn_remove.addEventListener('click', async () => {
+        const postId = [[${post.id}]];
+        const response = await fetch('/api/posts?postId=' + postId , {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (response.ok) {
+            alert('게시글이 삭제되었습니다.');
+            location.href = '/';
+        } else {
+            const errorMessage = await response.text();
+            alert('Error: ' + errorMessage);
+        }
+    });
+
+    async function isLoggedIn() {
+        const auth = await checkAuth();
+
+        if (auth === null || auth === 'anonymousUser') {
+            console.log('로그인 안됨');
+            btn_remove.style.display = 'none';
+            btn_edit.style.display = 'none';
+        } else {
+            console.log('로그인 중 : ' + auth);
+            btn_remove.style.display = 'block';
+            btn_edit.style.display = 'block';
+        }
+    }
+
+    window.onload = isLoggedIn;
+</script>
+
 
 </body>
 </html>

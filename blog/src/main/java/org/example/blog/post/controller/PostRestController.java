@@ -91,6 +91,27 @@ public class PostRestController {
         return postCreateDto;
     }
 
+    @DeleteMapping
+    public ResponseEntity<String> deletePost(@RequestParam("postId") Long postId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            return ResponseEntity.badRequest().body("Failed to get current user");
+        }
+        String username = authentication.getName();
+        Post post = postService.getPostById(postId);
+        if (post == null) {
+            return ResponseEntity.badRequest().body("Failed to get post");
+        }
+
+        try {
+            postService.deletePost(post, username);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Failed to delete post");
+        }
+
+        return ResponseEntity.ok().body("Post deleted successfully");
+    }
+
     @GetMapping("/recent")
     public ResponseEntity<Page<PostCardDto>> getRecentPosts(@RequestParam(value = "page", defaultValue = "0") int page,
                                                      @RequestParam(value = "size", defaultValue = "10") int size,

@@ -81,6 +81,14 @@ public class PostService {
     }
 
     @Transactional
+    public void deletePost(Post post, String username) {
+        if (!post.getUser().getUsername().equals(username)) {
+            throw new RuntimeException("You are not authorized to delete this post");
+        }
+        postRepository.delete(post);
+    }
+
+    @Transactional
     public Post savePost(Post post) {
         post.setUpdateTime(new Timestamp(System.currentTimeMillis()));
         return postRepository.save(post);

@@ -41,7 +41,7 @@
                             Dropdown
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/">내 블로그</a></li>
+                            <li><a class="dropdown-item" id="login_mypage">내 블로그</a></li>
                             <li><a class="dropdown-item" href="/saves">임시 글</a></li>
                             <li><a class="dropdown-item" href="#">읽기 목록</a></li>
                             <li><a class="dropdown-item" href="#">설정</a></li>
@@ -64,6 +64,7 @@
             const btn_login = document.getElementById('login');
             const btn_write = document.getElementById('login_write');
             const btn_dropdown = document.getElementById('login_dropdown');
+            const btn_mypage = document.getElementById('login_mypage');
 
             const auth = await checkAuth();
 
@@ -77,6 +78,7 @@
                 btn_login.style.display = 'none';
                 btn_write.style.display = 'block';
                 btn_dropdown.style.display = 'block';
+                btn_mypage.href = '/@' + auth;
             }
         }
 
