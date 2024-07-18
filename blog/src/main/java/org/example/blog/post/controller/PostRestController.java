@@ -15,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.example.blog.post.dto.PostCreateDto;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -138,6 +139,8 @@ public class PostRestController {
         try {
             String thumbnailPath = postService.saveImage(file, username);
             return ResponseEntity.ok().body(thumbnailPath);
+        } catch (MaxUploadSizeExceededException e) {
+            return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body("File too large");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Failed to save a image");
         }

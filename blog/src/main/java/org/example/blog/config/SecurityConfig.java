@@ -17,6 +17,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import static org.example.blog.statics.Constants.*;
+
 import java.util.List;
 
 @Configuration // Spring Security 설정을 위한 클래스임을 명시
@@ -26,6 +28,7 @@ public class SecurityConfig {
 
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final JwtTokenizer jwtTokenizer;
+    private final CustomLogoutSuccessHandler customLogoutSuccessHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

@@ -21,6 +21,11 @@ public class RefreshTokenService {
         refreshTokenRepository.findByValue(refreshToken).ifPresent(refreshTokenRepository::delete); // ifPresent: Optional 객체가 비어있지 않을 때만 실행
     }
 
+    @Transactional
+    public void deleteRefreshTokenByUserId(Long userId) {
+        refreshTokenRepository.findAllByUserId(userId).ifPresent(refreshTokenRepository::delete);
+    }
+
     @Transactional(readOnly = true)
     public RefreshToken findByToken(String token) {
         return refreshTokenRepository.findByValue(token).orElse(null);

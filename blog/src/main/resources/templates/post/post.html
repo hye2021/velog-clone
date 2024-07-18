@@ -47,11 +47,12 @@
                 <h6 class="card-subtitle mb-2 text-body-secondary tag" th:each="tag : ${post.tags}" th:text="'#' + ${tag.name} + '  '">Tag Name</h6>
             </div>
             <br>
-            <!-- 구분선 -->
             <div class="card text-center" style="width: 50rem; margin: 0 auto;">
                 <div th:if="${post.thumbnailPath != null}">
                     <img th:src="@{${post.thumbnailPath}}" class="card-img-top" alt="Post Image">
                 </div>
+                <br>
+                <br>
                 <p class="card-text" id="content" th:text="${post.content}"></p>
             </div>
         </div>

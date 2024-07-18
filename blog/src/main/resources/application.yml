@@ -16,6 +16,11 @@ spring:
         hibernate:
           dialect: org.hibernate.dialect.MySQLDialect
 
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
 jwt:
   secretKey: 12345678901234567890123456789012
   refreshKey: 12345678901234567890123456789012
@@ -25,3 +30,6 @@ server:
   servlet:
     session:
       tracking-modes: cookie
+
+  tomcat:
+    max-http-form-post-size: 10MB

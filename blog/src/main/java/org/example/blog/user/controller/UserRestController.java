@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.blog.user.entity.RefreshToken;
 import org.example.blog.user.entity.Role;
-import org.example.blog.post.entity.Series;
 import org.example.blog.user.entity.User;
 import org.example.blog.security.dto.UserLoginDto;
 import org.example.blog.security.dto.UserLoginResponseDto;
@@ -24,6 +23,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import static org.example.blog.statics.Constants.ACCESS_TOKEN;
+import static org.example.blog.statics.Constants.REFRESH_TOKEN;
 
 import java.util.List;
 import java.util.Map;
@@ -69,7 +71,7 @@ public class UserRestController {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if ("accessToken".equals(cookie.getName())) {
+                if (ACCESS_TOKEN.equals(cookie.getName())) {
                     return cookie.getValue();
                 }
             }
@@ -119,12 +121,12 @@ public class UserRestController {
                 .build();
 
         // 각 토큰을 쿠키로 설정
-        Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
+        Cookie accessTokenCookie = new Cookie(ACCESS_TOKEN, accessToken);
         accessTokenCookie.setPath("/");
         accessTokenCookie.setHttpOnly(true);
         accessTokenCookie.setMaxAge(Math.toIntExact(jwtTokenizer.ACCESS_TOKEN_EXPIRE_COUNT / 1000L));
 
-        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
+        Cookie refreshTokenCookie = new Cookie(REFRESH_TOKEN, refreshToken);
         refreshTokenCookie.setPath("/");
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setMaxAge(Math.toIntExact(jwtTokenizer.REFRESH_TOKEN_EXPIRE_COUNT / 1000L));
@@ -148,7 +150,7 @@ public class UserRestController {
         Cookie[] cookies = httpServletRequest.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("refreshToken")) {
+                if (cookie.getName().equals(REFRESH_TOKEN)) {
                     resfreshToken = cookie.getValue();
                     break;
                 }
@@ -178,7 +180,7 @@ public class UserRestController {
                 .name(user.getName())
                 .build();
 
-        Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
+        Cookie accessTokenCookie = new Cookie(ACCESS_TOKEN, accessToken);
         accessTokenCookie.setHttpOnly(true);
         // accessTokenCookie.setSecure(true); // HTTPS를 사용하는 경우 true
         accessTokenCookie.setPath("/");
