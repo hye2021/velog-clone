@@ -38,7 +38,7 @@
                     <li class="nav-item dropdown" id="login_dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                            aria-expanded="false">
-                            Dropdown
+                            마이메뉴
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" id="login_mypage">내 블로그</a></li>
@@ -69,12 +69,12 @@
             const auth = await checkAuth();
 
             if (auth === null || auth === 'anonymousUser') {
-                console.log('로그인 안됨');
+                console.log('[header] 로그인 안됨');
                 btn_login.style.display = 'block';
                 btn_write.style.display = 'none';
                 btn_dropdown.style.display = 'none';
             } else {
-                console.log('로그인 중 : ' + auth);
+                console.log('[header] 로그인 중 : ' + auth);
                 btn_login.style.display = 'none';
                 btn_write.style.display = 'block';
                 btn_dropdown.style.display = 'block';
@@ -82,7 +82,7 @@
             }
         }
 
-        window.onload = isLoggedIn;
+        window.addEventListener('load', isLoggedIn);
     </script>
 
 </div>

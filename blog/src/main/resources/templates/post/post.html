@@ -70,44 +70,54 @@
     </div>
 </div>
 
-<script th:src="@{/js/checkAuth.js}"></script>
 <script th:inline="javascript">
-    const btn_remove = document.getElementById('btn_remove');
-    const btn_edit = document.getElementById('btn_edit');
-
-    btn_remove.addEventListener('click', async () => {
-        const postId = [[${post.id}]];
-        const response = await fetch('/api/posts?postId=' + postId , {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        if (response.ok) {
-            alert('게시글이 삭제되었습니다.');
-            location.href = '/';
-        } else {
-            const errorMessage = await response.text();
-            alert('Error: ' + errorMessage);
-        }
-    });
-
-    async function isLoggedIn() {
+    async function manageButton() {
         const auth = await checkAuth();
+        const btn_remove = document.getElementById('btn_remove');
+        const btn_edit = document.getElementById('btn_edit');
 
-        if (auth === null || auth === 'anonymousUser') {
-            console.log('로그인 안됨');
-            btn_remove.style.display = 'none';
-            btn_edit.style.display = 'none';
-        } else {
-            console.log('로그인 중 : ' + auth);
-            btn_remove.style.display = 'block';
-            btn_edit.style.display = 'block';
+        const username = [[${post.user.username}]];
+        if (auth === username) {
+            console.log('[post] 계정 주인 : ' + auth);
+            if (btn_remove) btn_remove.style.display = 'block';
+            if (btn_edit) btn_edit.style.display = 'block';
+        } else{
+            console.log('[post] 계정 주인 아님');
+            if (btn_remove) btn_remove.style.display = 'none';
+            if (btn_edit) btn_edit.style.display = 'none';
         }
     }
 
-    window.onload = isLoggedIn;
+    async function setupEventListeners() {
+        const btn_remove = document.getElementById('btn_remove');
+        const btn_edit = document.getElementById('btn_edit');
+
+        if (btn_remove) {
+            btn_remove.addEventListener('click', async () => {
+                const postId = [[${post.id}]];
+                const response = await fetch(`/api/posts?postId=${postId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                if (response.ok) {
+                    alert('게시글이 삭제되었습니다.');
+                    location.href = '/';
+                } else {
+                    const errorMessage = await response.text();
+                    alert('Error: ' + errorMessage);
+                }
+            });
+        }
+    }
+
+    window.addEventListener('load', async () => {
+        await manageButton();
+        await setupEventListeners();
+    });
 </script>
+
 
 
 </body>
