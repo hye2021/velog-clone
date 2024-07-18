@@ -55,6 +55,13 @@ public class SecurityConfig {
                 // 폼 로그인 설정
                 .formLogin(httpSecurityFormLoginConfigurer ->
                         httpSecurityFormLoginConfigurer.disable()) // 폼 로그인 사용하지 않음
+
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/") // 로그아웃 성공 후 리디렉션할 URL
+                        .invalidateHttpSession(true)
+                        .deleteCookies(ACCESS_TOKEN, REFRESH_TOKEN)
+                        .permitAll())
                 // CORS 설정 (Cross-Origin Resource Sharing)
                 .cors(httpSecurityCorsConfigurer ->
                         httpSecurityCorsConfigurer

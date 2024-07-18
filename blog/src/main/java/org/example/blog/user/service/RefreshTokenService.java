@@ -2,6 +2,7 @@ package org.example.blog.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.blog.user.entity.RefreshToken;
+import org.example.blog.user.entity.User;
 import org.example.blog.user.repository.RefreshTokenRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
