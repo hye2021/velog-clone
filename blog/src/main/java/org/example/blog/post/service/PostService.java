@@ -55,13 +55,12 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public Page<Post> getRecentPosts(int page, int size, String username, String tagname, Long seriesId) {
-        log.info("*** [getRecentPosts] username : " + username + ", tagname : " + tagname + ", seriesId : " + seriesId);
+//        log.info("*** [getRecentPosts] username : " + username + ", tagname : " + tagname + ", seriesId : " + seriesId);
         if (tagname == null || tagname.isEmpty()) {
             if (username == null || username.isEmpty()) {
                 return getAllRecentPosts(page, size);
             }
             else if (seriesId != null) {
-                 log.info("*** [getRecentPosts] series Id : " + seriesId.toString());
                  return getRecentPostsByUsernameAndSeries(page, size, username, seriesId.toString());
             } else {
                 return getRecentPostsByUsername(page, size, username);
