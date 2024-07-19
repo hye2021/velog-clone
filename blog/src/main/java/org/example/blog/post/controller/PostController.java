@@ -44,6 +44,7 @@ public class PostController {
         // 인증 정보가 없으면 spring security가 reject할 것임.
         String username = customUserDetails.getUsername();
         List<Post> posts = postService.getSavedPosts(username);
+        model.addAttribute("username", username);
         model.addAttribute("posts", posts);
         return PATH + "save";
     }
