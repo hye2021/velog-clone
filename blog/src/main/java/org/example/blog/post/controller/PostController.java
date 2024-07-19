@@ -53,33 +53,6 @@ public class PostController {
                           @PathVariable(name = "page") String page,
                           Model model,
                           RedirectAttributes redirectAttributes) {
-        // user 페이지에서 posts, series, about 페이지로 이동하는 경우
-        if (UserPageEnums.contains(page)) {
-            return gotoUserBlog(username, page, model, redirectAttributes);
-        } else {
-            return gotoPost(username, page, model, redirectAttributes);
-        }
-    }
-
-    private String gotoUserBlog(String username,
-                               String page,
-                               Model model,
-                               RedirectAttributes redirectAttributes) {
-        User user = postService.getUsersByUsername(username);
-        if(user == null) {
-            redirectAttributes.addFlashAttribute("message", "존재하지 않는 페이지입니다.");
-            return "redirect:/error";
-        }
-        model.addAttribute("user", user);
-        model.addAttribute("username", username);
-        model.addAttribute("page", page);
-        return "blog/blog";
-    }
-
-    private String gotoPost(String username,
-                            String page,
-                            Model model,
-                            RedirectAttributes redirectAttributes) {
         Long postId;
         try {
             postId = Long.parseLong(page);
@@ -96,6 +69,15 @@ public class PostController {
         model.addAttribute("post", post);
         model.addAttribute("username", username);
         return PATH + "post";
+    }
+
+    @GetMapping("/@{username}/series/{seriesId}")
+    public String getSeries(@PathVariable(name = "username") String username,
+                            @PathVariable(name = "seriesId") Long seriesId,
+                            Model model) {
+        model.addAttribute("username", username);
+        model.addAttribute("seriesId", seriesId);
+        return PATH + "series";
     }
 
     @GetMapping("/images/{username}/{filename:.+}")
@@ -115,5 +97,6 @@ public class PostController {
             return ResponseEntity.notFound().build();
         }
     }
+
 
 }

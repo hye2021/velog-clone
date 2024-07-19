@@ -54,22 +54,22 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public Page<Post> getRecentPosts(int page, int size, String username, String tagname) {
+    public Page<Post> getRecentPosts(int page, int size, String username, String tagname, Long seriesId) {
+        log.info("*** [getRecentPosts] username : " + username + ", tagname : " + tagname + ", seriesId : " + seriesId);
         if (tagname == null || tagname.isEmpty()) {
             if (username == null || username.isEmpty()) {
-//                  log.info("*** [getRecentPosts] username: null, tagname: null");
                 return getAllRecentPosts(page, size);
             }
-            else {
-                 log.info("*** [getRecentPosts] username: " + username + ", tagname: null");
+            else if (seriesId != null) {
+                 log.info("*** [getRecentPosts] series Id : " + seriesId.toString());
+                 return getRecentPostsByUsernameAndSeries(page, size, username, seriesId.toString());
+            } else {
                 return getRecentPostsByUsername(page, size, username);
             }
         } else {
             if (username == null || username.isEmpty()) {
-//                 log.info("*** [getRecentPosts] username: null, tagname: " + tagname);
                 return getRecentPostsByTag(page, size, tagname);
             } else {
-//                 log.info("*** [getRecentPosts] username: " + username + ", tagname: " + tagname);
                 return getRecentPostsByUsernameAndTags(page, size, username, tagname);
             }
         }
@@ -101,6 +101,13 @@ public class PostService {
     public Page<Post> getRecentPostsByUsernameAndTags(int page, int size, String username, String tagname) {
         Pageable pageable = createRecentPageable(page, size);
         Page<Post> postPage = postRepository.findByUserUsernameAndTagsNameAndPublishStatus(username, tagname, true, pageable);
+        return postPage;
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Post> getRecentPostsByUsernameAndSeries(int page, int size, String username, String seriesId) {
+        Pageable pageable = createRecentPageable(page, size);
+        Page<Post> postPage = postRepository.findByUserUsernameAndSeriesIdAndPublishStatus(username, Long.parseLong(seriesId), true, pageable);
         return postPage;
     }
 

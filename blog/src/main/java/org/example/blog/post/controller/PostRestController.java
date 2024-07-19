@@ -119,8 +119,9 @@ public class PostRestController {
     public ResponseEntity<Page<PostCardDto>> getRecentPosts(@RequestParam(value = "page", defaultValue = "0") int page,
                                                      @RequestParam(value = "size", defaultValue = "10") int size,
                                                      @RequestParam(value = "username", defaultValue = "", required = false) String username,
-                                                     @RequestParam(value = "tag", defaultValue = "", required = false) String tag) {
-        Page<Post> posts = postService.getRecentPosts(page, size, username, tag);
+                                                     @RequestParam(value = "tag", defaultValue = "", required = false) String tag,
+                                                     @RequestParam(value = "seriesId", defaultValue = "", required = false) Long seriesId) {
+        Page<Post> posts = postService.getRecentPosts(page, size, username, tag, seriesId);
         if(posts == null) {
             return ResponseEntity.noContent().build();
         }

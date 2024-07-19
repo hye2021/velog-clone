@@ -47,19 +47,38 @@ public class BlogController {
         return "redirect:/@" + username + "/" + "posts";
     }
 
-/*    @GetMapping("/@{username}/{page}")
-    public String userPage(@PathVariable("username") String username,
-                           @PathVariable("page") String page,
+    @GetMapping("/@{username}/posts")
+    public String posts(@PathVariable("username") String username,
                            Model model) {
-        // Flash Attribute로 전달된 User 객체가 없다면 추가..
-        if (!model.containsAttribute("user")) {
-            User user = userService.getUsersByUsername(username);
-            model.addAttribute("user", user);
+        return gotoUserBlog(username, "posts", model, null);
+    }
+
+    @GetMapping("/@{username}/series")
+    public String series(@PathVariable("username") String username,
+                           Model model) {
+        return gotoUserBlog(username, "series", model, null);
+    }
+
+    @GetMapping("/@{username}/about")
+    public String about(@PathVariable("username") String username,
+                           Model model) {
+        return gotoUserBlog(username, "about", model, null);
+    }
+
+    private String gotoUserBlog(String username,
+                                String page,
+                                Model model,
+                                RedirectAttributes redirectAttributes) {
+        User user = userService.getUsersByUsername(username);
+        if(user == null) {
+            redirectAttributes.addFlashAttribute("message", "존재하지 않는 페이지입니다.");
+            return "redirect:/error";
         }
+        model.addAttribute("user", user);
         model.addAttribute("username", username);
         model.addAttribute("page", page);
-        return PATH + "blog";
-    }*/
+        return "blog/blog";
+    }
 
     @GetMapping("/error")
     public String error(Model model) {

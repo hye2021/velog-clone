@@ -2,11 +2,61 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Series</title>
+    <!-- Bootstrap CSS 추가 -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.3/css/bootstrap.min.css">
 </head>
 <body>
 <div th:fragment="content">
     <h1>Series Page</h1>
-    <p>Here is the content of the series page.</p>
+    <div class="container">
+        <div id="post-container" class="row justify-content-center">
+            <!-- 게시글이 추가될 영역 -->
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        const username = [[${username}]];
+
+        // post 가져오기
+        async function loadSeries() {
+            try {
+                const response = await fetch(`/api/posts/${username}/series`);
+                if (!response.ok) {
+                    throw new Error('Failed to load posts.');
+                }
+                const series = await response.json();
+                console.log(series);
+
+                series.forEach(item => {
+                    const postContainer = document.createElement('div');
+                    postContainer.className = 'col-md-8'; // 중앙 정렬을 위한 클래스 추가
+                    postContainer.innerHTML = `
+                        <div class="card mx-auto mb-4" style="width: 100%;">
+                            <div class="card-body ">
+                                <h3 class="card-title">${item.title}</h3>
+                                <a href="/@${item.user.username}/series/${item.id}" class="btn btn-primary">게시글 보러 가기</a>
+                            </div>
+                        </div>
+                    `;
+                    document.getElementById('post-container').appendChild(postContainer);
+                });
+
+            } catch (error) {
+                console.error(error);
+                alert('Failed to load posts.');
+            }
+        }
+
+        // 리스너 추가
+        window.addEventListener('load', async () => {
+            await loadSeries();
+        });
+
+    </script>
+
 </div>
+
+<!-- Bootstrap JS 추가 -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
